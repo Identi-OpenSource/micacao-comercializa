@@ -4,19 +4,11 @@ import { useNavigation } from '@react-navigation/native'
 import useSecureStorage from './useSecureStorage'
 import { KEYS_MMKV } from '../config/mmkv'
 
-// Tipo para los parámetros de la solicitud
-type RequestParams = {
-  url: string
-  data?: any
-  config?: AxiosRequestConfig
-}
-
 // Manejador de errores de Axios
 const handleAxiosError = (error: AxiosError) => {
   const { response } = error as AxiosError
   if (response) {
-    const errorMessage =
-      (response.data as { message?: string })?.message || 'Error desconocido'
+    const errorMessage = (response.data as { message?: string })?.message || ''
     if (response.status === 404) {
       console.error('Recurso no encontrado')
     } else {
@@ -29,15 +21,45 @@ const handleAxiosError = (error: AxiosError) => {
   }
 }
 
-// Hook personalizado para manejar peticiones HTTP
-const useCustomHttpRequest = (): ((params: RequestParams) => Promise<any>) => {
-  const { storageMMKV, getItem, clearMMKV } = useSecureStorage()
+// Manejador de respuestas de Axios
+const handleResponse = <T>(response: AxiosResponse<T>): T => {
+  return response.data
+}
 
+// Función general para las solicitudes HTTP
+const handleRequest = async <T>(
+  method: 'get' | 'post' | 'put' | 'delete',
+  url: string,
+  data?: any,
+  config?: AxiosRequestConfig
+): Promise<T> => {
+  try {
+    console.log(method.toUpperCase(), url)
+    const response: AxiosResponse<T> = await axios({
+      method,
+      url,
+      data,
+      ...config
+    })
+    return handleResponse(response)
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      handleAxiosError(error)
+    } else {
+      console.error('Error inesperado:', error)
+    }
+    throw error
+  }
+}
+
+// Hook personalizado para manejar peticiones HTTP
+const useCustomHttpRequest = () => {
+  const { getItem, clearMMKV } = useSecureStorage()
   const navigation = useNavigation()
 
-  useEffect(() => {
-    // Configurar interceptores
-    const requestInterceptor = axios.interceptors.request.use(
+  // Interceptor de solicitud
+  const setupRequestInterceptor = () => {
+    return axios.interceptors.request.use(
       async config => {
         const token = getItem(KEYS_MMKV.ACCESS_TOKEN)
         if (token) {
@@ -47,8 +69,11 @@ const useCustomHttpRequest = (): ((params: RequestParams) => Promise<any>) => {
       },
       error => Promise.reject(error)
     )
+  }
 
-    const responseInterceptor = axios.interceptors.response.use(
+  // Interceptor de respuesta
+  const setupResponseInterceptor = () => {
+    return axios.interceptors.response.use(
       response => response,
       async (error: AxiosError) => {
         const errorRsp = error.response
@@ -60,38 +85,30 @@ const useCustomHttpRequest = (): ((params: RequestParams) => Promise<any>) => {
         return Promise.reject(error)
       }
     )
+  }
+
+  useEffect(() => {
+    const requestInterceptor = setupRequestInterceptor()
+    const responseInterceptor = setupResponseInterceptor()
 
     // Limpieza de interceptores cuando el componente se desmonte
     return () => {
       axios.interceptors.request.eject(requestInterceptor)
       axios.interceptors.response.eject(responseInterceptor)
     }
-  }, [storageMMKV, navigation])
+  }, [getItem, clearMMKV, navigation])
 
-  // Función de petición HTTP
-  const request = async <T>({
-    url,
-    data = {},
-    config = {}
-  }: RequestParams): Promise<T> => {
-    try {
-      const response: AxiosResponse<T> = await axios.request({
-        url,
-        data,
-        ...config
-      })
-      return response.data
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        handleAxiosError(error)
-      } else {
-        console.error('Error inesperado:', error)
-      }
-      throw error
-    }
+  // Métodos HTTP reutilizables
+  return {
+    get: <T>(url: string, config?: AxiosRequestConfig) =>
+      handleRequest<T>('get', url, undefined, config),
+    post: <T>(url: string, data?: any, config?: AxiosRequestConfig) =>
+      handleRequest<T>('post', url, data, config),
+    put: <T>(url: string, data?: any, config?: AxiosRequestConfig) =>
+      handleRequest<T>('put', url, data, config),
+    delete: <T>(url: string, config?: AxiosRequestConfig) =>
+      handleRequest<T>('delete', url, undefined, config)
   }
-
-  return request
 }
 
 export default useCustomHttpRequest

@@ -6,8 +6,14 @@ import * as Yup from 'yup'
 import { COLORS } from '../../../contexts/theme/neutralTheme'
 import i18n from '../../../contexts/i18n/i18n'
 import useCustomHttpRequest from '../../../hooks/useCustomHttpRequest'
-import { DialogContext } from '../../../contexts/alerts/DialogContext'
-// import useCustomHttpRequest from '../../../hooks/useCustomHttpRequest'
+import { API_CONFIG } from '../../../config/apis'
+import Config from 'react-native-config'
+import useErrorHandler from '../../../hooks/useErrorHandler'
+import { AxiosError } from 'axios'
+import useSecureStorage from '../../../hooks/useSecureStorage'
+import { KEYS_MMKV } from '../../../config/mmkv'
+import { AuthResponse } from '../../../models/Auth'
+import { useAuth } from '../../../contexts/auth/AuthContext'
 
 // Constantes
 const { width } = Dimensions.get('window')
@@ -15,30 +21,27 @@ const LOGO = require('../../../assets/img/logo.png')
 
 // Función principal del LoginScreen
 export const LoginScreen: React.FC = () => {
-  const { showDialog } = React.useContext(DialogContext)!
   const [isLoading, setIsLoading] = React.useState(false)
-  const request = useCustomHttpRequest()
+  const { post } = useCustomHttpRequest()
+  const { setItem } = useSecureStorage()
+  const handleError = useErrorHandler()
+  const { login } = useAuth()
 
   const formik = useLoginFormik(async values => {
     try {
       setIsLoading(true)
-      const responseData = await request({
-        url: 'https://api.example.com/data',
-        data: { param1: 'value1' },
-        config: { method: 'POST' }
-      })
-      // Manejar la respuesta exitosa aquí
-      console.log('Respuesta exitosa:', responseData)
+      const data = {
+        ...values,
+        channel: Config.CHANNEL_APP,
+        tenant: '',
+        country: ''
+      }
+      const resp = await post<AuthResponse>(API_CONFIG.Auth.login, data)
+      setItem(KEYS_MMKV.ACCESS_TOKEN, resp.data.access_token)
+      setItem(KEYS_MMKV.REFRESH_TOKEN, resp.data.refresh_token)
+      login()
     } catch (err) {
-      // Manejar el error aquí
-      showDialog({
-        title: 'Título del diálogo',
-        message: 'Mensaje del diálogo',
-        onClose: () => {
-          console.log('Diálogo cerrado')
-        }
-      })
-      console.error('Error en la solicitud:', err)
+      handleError(err as AxiosError)
     } finally {
       setIsLoading(false)
     }
@@ -86,7 +89,7 @@ const getLoginSchema = () => {
       .max(50, i18n.t('maxLengthString', { values: { maxLength: 50 } }))
       .required(i18n.t('required')),
     password: Yup.string()
-      .min(8, i18n.t('minLengthString', { values: { minLength: 8 } }))
+      .min(6, i18n.t('minLengthString', { values: { minLength: 8 } }))
       .required(i18n.t('required'))
   })
 }
@@ -100,8 +103,8 @@ const useLoginFormik = (
 ) => {
   return useFormik<LoginValues>({
     initialValues: {
-      username: '',
-      password: ''
+      username: /* '', */ 'bl_test',
+      password: /* '', */ '111111'
     },
     validationSchema: getLoginSchema(),
     onSubmit
@@ -116,7 +119,7 @@ interface FormInputProps {
   secureTextEntry?: boolean
 }
 
-// Componente reutilizable de Input
+// Componente de Input
 const FormInput: React.FC<FormInputProps> = ({
   placeholder,
   field,
@@ -146,7 +149,7 @@ interface FormButtonProps {
   onPress: () => void
 }
 
-// Componente reutilizable de Botón
+// Componente de Botón
 const FormButton: React.FC<FormButtonProps> = ({
   title,
   isLoading,

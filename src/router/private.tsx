@@ -1,13 +1,13 @@
 import React from 'react'
-import { LoginScreen } from '../screens/public/login/LoginScreen'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
+import { HomeScreen } from '../screens/private/home/HomeScreen'
 
 const Stack = createNativeStackNavigator()
 
 const PrivateStack = () => {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="Home" component={LoginScreen} />
+      <Stack.Screen name="Home" component={HomeScreen} />
     </Stack.Navigator>
   )
 }

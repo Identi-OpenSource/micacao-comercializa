@@ -8,7 +8,6 @@ import { useAuth } from '../contexts/auth/AuthContext'
 
 const MainRouter = () => {
   const { isAuthenticated } = useAuth()
-  console.log('isAuthenticated', isAuthenticated)
 
   const styleObject = StyleSheet.create({
     container: {

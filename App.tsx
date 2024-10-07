@@ -5,16 +5,17 @@ import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { ThemeProvider } from './src/contexts/theme/ThemeContext'
 import { ConfigI18nProvider } from './src/contexts/i18n/Configi18nContext'
 import { getSecureStorage } from './src/config/mmkv'
-import { MMKV } from 'react-native-mmkv'
 import { DialogProvider } from './src/contexts/alerts/DialogContext'
+import { AuthProvider } from './src/contexts/auth/AuthContext'
+import useSecureStorage from './src/hooks/useSecureStorage'
 
 const App = () => {
-  const [storage, setStorage] = React.useState<MMKV | null>(null)
+  const { storageMMKV } = useSecureStorage()
+
   React.useEffect(() => {
     const initializeStorage = async () => {
       try {
-        const secureStorage = await getSecureStorage()
-        setStorage(secureStorage)
+        await getSecureStorage()
       } catch (error) {
         console.error('Error al inicializar el almacenamiento:', error)
       }
@@ -22,12 +23,15 @@ const App = () => {
 
     initializeStorage()
   }, [])
-  return storage ? (
+
+  return storageMMKV ? (
     <SafeAreaProvider>
       <ConfigI18nProvider>
         <ThemeProvider>
           <DialogProvider>
-            <MainRouter />
+            <AuthProvider>
+              <MainRouter />
+            </AuthProvider>
           </DialogProvider>
         </ThemeProvider>
       </ConfigI18nProvider>

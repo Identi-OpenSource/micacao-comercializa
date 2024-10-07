@@ -4,7 +4,8 @@ import { Platform } from 'react-native'
 import Config from 'react-native-config'
 
 export const KEYS_MMKV = {
-  ACCESS_TOKEN: 'accessToken'
+  ACCESS_TOKEN: 'accessToken',
+  REFRESH_TOKEN: 'refreshToken'
 }
 
 const ENCRYPTION_KEY_ID = Config?.ENCRYPTION_KEY_ID || ''
