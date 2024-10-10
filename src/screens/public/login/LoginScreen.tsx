@@ -13,7 +13,7 @@ import { AxiosError } from 'axios'
 import useSecureStorage from '../../../hooks/useSecureStorage'
 import { KEYS_MMKV } from '../../../config/mmkv'
 import { AuthResponse } from '../../../models/Auth'
-import { useAuth } from '../../../contexts/auth/AuthContext'
+import { useAuthLocal } from '../../../contexts/auth/AuthContext'
 
 // Constantes
 const { width } = Dimensions.get('window')
@@ -25,7 +25,7 @@ export const LoginScreen: React.FC = () => {
   const { post } = useCustomHttpRequest()
   const { setItem } = useSecureStorage()
   const handleError = useErrorHandler()
-  const { login } = useAuth()
+  const { login } = useAuthLocal()
 
   const formik = useLoginFormik(async values => {
     try {
@@ -39,7 +39,7 @@ export const LoginScreen: React.FC = () => {
       const resp = await post<AuthResponse>(API_CONFIG.Auth.login, data)
       setItem(KEYS_MMKV.ACCESS_TOKEN, resp.data.access_token)
       setItem(KEYS_MMKV.REFRESH_TOKEN, resp.data.refresh_token)
-      login()
+      await login(resp?.data?.access_token)
     } catch (err) {
       handleError(err as AxiosError)
     } finally {

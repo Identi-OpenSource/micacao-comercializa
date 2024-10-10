@@ -8,10 +8,10 @@ import React, {
 import { KEYS_MMKV } from '../../config/mmkv'
 import useSecureStorage from '../../hooks/useSecureStorage'
 import { getDataFromJWT } from '../../utils/jwt'
-
+import { useAuth } from '@realm/react'
 interface AuthContextType {
   isAuthenticated: boolean
-  login: () => void
+  login: (token: string) => void
   logout: () => void
 }
 
@@ -28,6 +28,7 @@ interface AuthProviderProps {
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const { getItem, storageMMKV, clearMMKV } = useSecureStorage()
+  const { logInWithJWT, logOut } = useAuth()
 
   useEffect(() => {
     if (storageMMKV !== null) {
@@ -36,20 +37,28 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       const decoded = token && getDataFromJWT(token)
       // const decodedRefresh = tokenRefresh && getDataFromJWT(tokenRefresh)
       if (decoded?.isDateValid /* || decodedRefresh?.isDateValid */) {
-        login()
+        login(token)
       } else {
         logout()
       }
     }
   }, [storageMMKV])
 
-  const login = () => {
-    setIsAuthenticated(true)
+  const login = async (token: string) => {
+    try {
+      setIsAuthenticated(true)
+      // login realm y atlas, esto cambia si se usa otra base de datos
+      await logInWithJWT(token)
+    } catch (error) {
+      console.error('Error al inicializar realm:', error)
+    }
   }
 
   const logout = () => {
     clearMMKV()
     setIsAuthenticated(false)
+    // logout realm y atlas, esto cambia si se usa otra base de datos
+    logOut()
   }
 
   return (
@@ -59,7 +68,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   )
 }
 
-export const useAuth = () => {
+export const useAuthLocal = () => {
   const context = useContext(AuthContext)
   if (!context) {
     throw new Error('useAuth must be used within an AuthProvider')

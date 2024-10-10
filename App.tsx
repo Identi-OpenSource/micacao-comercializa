@@ -1,17 +1,17 @@
-/* eslint-disable multiline-ternary */
 import React from 'react'
-import MainRouter from './src/router/main'
-import { SafeAreaProvider } from 'react-native-safe-area-context'
-import { ThemeProvider } from './src/contexts/theme/ThemeContext'
-import { ConfigI18nProvider } from './src/contexts/i18n/Configi18nContext'
-import { getSecureStorage } from './src/config/mmkv'
-import { DialogProvider } from './src/contexts/alerts/DialogContext'
-import { AuthProvider } from './src/contexts/auth/AuthContext'
+import { NavigationContainer } from '@react-navigation/native'
 import useSecureStorage from './src/hooks/useSecureStorage'
+import { getSecureStorage } from './src/config/mmkv'
+import { ProvidersAllApp } from './src/contexts/main/Providers'
+import { AppProvider, UserProvider } from '@realm/react'
+import PublicStack from './src/router/public'
+import Config from 'react-native-config'
+import { SafeAreaProvider } from 'react-native-safe-area-context'
+import { RealmAuth } from './src/models/db/RealmAuth'
+import PrivateStack from './src/router/private'
 
 const App = () => {
   const { storageMMKV } = useSecureStorage()
-
   React.useEffect(() => {
     const initializeStorage = async () => {
       try {
@@ -24,19 +24,20 @@ const App = () => {
     initializeStorage()
   }, [])
 
-  return storageMMKV ? (
+  // Configuración para realm de mongo Atlas
+  return (
     <SafeAreaProvider>
-      <ConfigI18nProvider>
-        <ThemeProvider>
-          <DialogProvider>
-            <AuthProvider>
-              <MainRouter />
-            </AuthProvider>
-          </DialogProvider>
-        </ThemeProvider>
-      </ConfigI18nProvider>
+      <AppProvider id={Config.ATLAS_APP || ''}>
+        <ProvidersAllApp>
+          <NavigationContainer>
+            <UserProvider fallback={<PublicStack />}>
+              <RealmAuth>{storageMMKV && <PrivateStack />}</RealmAuth>
+            </UserProvider>
+          </NavigationContainer>
+        </ProvidersAllApp>
+      </AppProvider>
     </SafeAreaProvider>
-  ) : null
+  )
 }
 
 export default App
