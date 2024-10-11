@@ -1,18 +1,22 @@
 import { RealmProvider, useApp } from '@realm/react'
 import React from 'react'
 import Realm from 'realm'
-import { ModuleSchema } from './ModuleSchema'
+import { ModuleSchema } from '../features/modules/model/ModuleSchema'
+import { useSecureStorage } from '../contexts/secure/SecureStorageContext'
+import { LoadingStore } from '../components/loading/LoadingFull'
+import { UserSchema } from '../features/users/model/UserSchema'
 
 export const RealmAuth = ({ children }: any) => {
   const app = useApp()
+  const { getDataJWT, storageMMKV } = useSecureStorage()
   const realmAccessBehavior: Realm.OpenRealmBehaviorConfiguration = {
     type: Realm.OpenRealmBehaviorType.OpenImmediately
   }
 
-  const schemas = [ModuleSchema]
+  const schemas = [ModuleSchema, UserSchema]
 
-  if (!app?.currentUser?.id) {
-    return <></>
+  if (!app?.currentUser?.id || !storageMMKV) {
+    return <LoadingStore />
   }
   return (
     <RealmProvider
@@ -24,12 +28,13 @@ export const RealmAuth = ({ children }: any) => {
           rerunOnOpen: true,
           update: (mutableSubs, realm) => {
             try {
+              const dataJWT = getDataJWT()
+              const users = realm
+                .objects('User')
+                .filtered('tenant == $0', dataJWT?.tenant)
               const modules = realm
                 .objects('Module')
-                .filtered('tenant == $0', 'sfsf')
-              // const users = realm
-              //   .objects('User')
-              //   .filtered('tenant == $0', user?.data?.tenant)
+                .filtered('tenant == $0', dataJWT?.tenant)
               // const person = realm
               //   .objects('PersonEntity')
               //   .filtered('tenant == $0', user?.data?.tenant)
@@ -38,8 +43,8 @@ export const RealmAuth = ({ children }: any) => {
               // const province = realm.objects('Province')
               // const district = realm.objects('District')
 
+              mutableSubs.add(users, { name: 'usersSubscription' })
               mutableSubs.add(modules, { name: 'modulesSubscription' })
-              // mutableSubs.add(users, { name: 'usersSubscription' })
               // mutableSubs.add(person, { name: 'personSubscription' })
               // mutableSubs.add(country, { name: 'countrySubscription' })
               // mutableSubs.add(department, { name: 'departmentSubscription' })

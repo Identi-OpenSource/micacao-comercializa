@@ -1,0 +1,13 @@
+{
+  "_id": "66e055132f996ae5df7fa3c9",
+  "active_end_at": "",
+  "active_init_at": "",
+  "entity_type": "COMPLEMENTARY",
+  "id": "8dc8e02c-1a8c-4661-bdf5-3117188f5b08",
+  "image_path": "data_collector/compras_d673d74f-24d5-477e-ab02-17bb000ba040",
+  "module_type": "FREE",
+  "name": "Registro de nueva compra",
+  "schema_id": "d321cd27-773a-45f4-b469-cc5b3040ea15",
+  "tenant": "0c20124c-16ff-4cfa-97a0-24db40d4323f",
+  "type_view": "ALL"
+}

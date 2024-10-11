@@ -1,8 +1,8 @@
 import { useEffect } from 'react'
 import axios, { AxiosRequestConfig, AxiosResponse, AxiosError } from 'axios'
 import { useNavigation } from '@react-navigation/native'
-import useSecureStorage from './useSecureStorage'
 import { KEYS_MMKV } from '../config/mmkv'
+import { useSecureStorage } from '../contexts/secure/SecureStorageContext'
 
 // Manejador de errores de Axios
 const handleAxiosError = (error: AxiosError) => {

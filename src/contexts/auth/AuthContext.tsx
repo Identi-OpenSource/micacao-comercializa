@@ -6,9 +6,9 @@ import React, {
   useEffect
 } from 'react'
 import { KEYS_MMKV } from '../../config/mmkv'
-import useSecureStorage from '../../hooks/useSecureStorage'
 import { getDataFromJWT } from '../../utils/jwt'
 import { useAuth } from '@realm/react'
+import { useSecureStorage } from '../secure/SecureStorageContext'
 interface AuthContextType {
   isAuthenticated: boolean
   login: (token: string) => void

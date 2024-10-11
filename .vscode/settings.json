@@ -1,6 +1,8 @@
 {
   "cSpell.words": [
+    "BSON",
     "caracters",
+    "consts",
     "encriptación",
     "formik",
     "keychain",
@@ -10,6 +12,7 @@
     "MMKV",
     "reutilizable",
     "rneui",
+    "RNFS",
     "tipado"
   ]
 }

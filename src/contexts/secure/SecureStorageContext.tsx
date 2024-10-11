@@ -1,11 +1,35 @@
-import { useEffect, useState } from 'react'
+import React, {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useState
+} from 'react'
 import { MMKV } from 'react-native-mmkv'
-import { getSecureStorage, KEYS_MMKV } from '../config/mmkv'
-import { getDataFromJWT } from '../utils/jwt'
+import { getSecureStorage, KEYS_MMKV } from '../../config/mmkv'
+import { getDataFromJWT } from '../../utils/jwt'
 
 type StorageValueType = string | number | boolean | null
 
-const useSecureStorage = () => {
+interface SecureStorageContextType {
+  storageMMKV: MMKV | null
+  errorMMKV: Error | null
+  getItem: (key: string) => StorageValueType
+  getDataJWT: () => any
+  setItem: (key: string, value: StorageValueType) => void
+  removeItem: (key: string) => void
+  clearMMKV: () => void
+}
+
+const SecureStorageContext = createContext<SecureStorageContextType | null>(
+  null
+)
+
+interface SecureStorageProps {
+  children: ReactNode
+}
+
+export const SecureStorageProvider = ({ children }: SecureStorageProps) => {
   const [storage, setStorage] = useState<MMKV | null>(null)
   const [error, setError] = useState<Error | null>(null)
 
@@ -59,16 +83,28 @@ const useSecureStorage = () => {
     storage.clearAll()
   }
 
-  return {
-    setStorage,
-    storageMMKV: storage,
-    errorMMKV: error,
-    getItem,
-    getDataJWT,
-    setItem,
-    removeItem,
-    clearMMKV: clear
-  }
+  return (
+    <SecureStorageContext.Provider
+      value={{
+        storageMMKV: storage,
+        errorMMKV: error,
+        getItem,
+        getDataJWT,
+        setItem,
+        removeItem,
+        clearMMKV: clear
+      }}>
+      {children}
+    </SecureStorageContext.Provider>
+  )
 }
 
-export default useSecureStorage
+export const useSecureStorage = (): SecureStorageContextType => {
+  const context = useContext(SecureStorageContext)
+  if (!context) {
+    throw new Error(
+      'useSecureStorage must be used within a SecureStorageProvider'
+    )
+  }
+  return context
+}

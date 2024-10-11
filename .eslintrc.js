@@ -6,6 +6,7 @@ module.exports = {
     'space-before-function-paren': 'off',
     'react-hooks/exhaustive-deps': 'off',
     '@typescript-eslint/no-unused-vars': 'off',
+    'multiline-ternary': 'off',
     'no-sequences': ['error', { allowInParentheses: true }]
   }
 }

@@ -6,7 +6,7 @@ export type Auth = {
 }
 
 export type AuthResponse = {
-  data: Auth
+  data: any
   message: string
   status_code: number
 }
