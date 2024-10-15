@@ -11,8 +11,8 @@ import Config from 'react-native-config'
 import useErrorHandler from '../../../hooks/useErrorHandler'
 import { AxiosError } from 'axios'
 import useSecureStorage from '../../../hooks/useSecureStorage'
-import { KEYS_MMKV } from '../../../config/mmkv'
-import { AuthResponse } from '../../../models/Auth'
+import { KEYS_MMKV } from '../../../db/mmkv'
+import { AuthResponse } from '../../../db/models/Auth'
 import { useAuthLocal } from '../../../contexts/auth/AuthContext'
 
 // Constantes

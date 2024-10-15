@@ -1,8 +1,8 @@
 {
   "_id": {
-    "$oid": "66f43207a72e88bbc80bebc6"
+    "$oid": "id del esquema MONGODB"
   },
-  "id": "a1284dc6-67f3-4cae-b808-5cbec7ab0a78",
+  "id": "id del esquema",
   "instruction_group_summary": [],
   "instruction_start": "9380e9cb-2005-474c-bffa-0330c3a02d05",
   "instructions": [
@@ -222,7 +222,7 @@
               }
             ]
           },
-          "value": "9999999999"
+          "value": "99999999"
         }
       ],
       "schema_variables": [],
@@ -238,7 +238,7 @@
       },
       "metadata": {
         "data_input": {
-          "max": "9999999999",
+          "max": "99999999",
           "min": "0",
           "type": "number",
           "description": null,
@@ -262,7 +262,7 @@
       },
       "schema_gather": {
         "id": "f92fef43-3f7d-47ad-93fc-3a31239a5a10",
-        "name": "código interno",
+        "name": "Código interno",
         "type_value": "text",
         "is_module_attr": true,
         "is_unique": true,
@@ -357,7 +357,7 @@
       },
       "schema_gather": {
         "id": "0bd6b2dd-69ec-4db6-95ba-c44a746db3cd",
-        "name": "género",
+        "name": "sexo",
         "type_value": "option",
         "is_module_attr": true,
         "is_unique": false,
@@ -367,11 +367,11 @@
         "option": [
           {
             "id": "18c68edf-9d76-44a1-915a-ffc8bcb3067b",
-            "value": "Hombre"
+            "value": "Femenino"
           },
           {
             "id": "496425b1-adaa-475a-8bcb-f77008288ddb",
-            "value": "Mujer"
+            "value": "Masculino"
           }
         ]
       },
@@ -391,7 +391,7 @@
           "schema_input": [],
           "rules": {},
           "id": "c752af3d-775f-4927-b308-731881e13e92",
-          "value": "Género"
+          "value": "Sexo"
         },
         {
           "name": "type",
@@ -460,11 +460,11 @@
           "value": [
             {
               "id": "18c68edf-9d76-44a1-915a-ffc8bcb3067b",
-              "value": "Hombre"
+              "value": "Femenino"
             },
             {
               "id": "496425b1-adaa-475a-8bcb-f77008288ddb",
-              "value": "Mujer"
+              "value": "Masculino"
             }
           ]
         }
@@ -473,8 +473,8 @@
       "schema_variables": [],
       "schema_conditions": [
         {
-          "id": "d7fbbe14-5825-4a71-b6f0-f28b5d31f147",
-          "next_instruction_id": "ef42302d-3c17-4e69-9925-fa92fd62a365",
+          "id": "203a02ae-e3bc-41c2-919f-1c1b7368019a",
+          "next_instruction_id": "9a9a029c-71d2-4441-9051-63f3b0459a15",
           "type_condition": "by_success"
         }
       ],
@@ -484,34 +484,34 @@
       "metadata": {
         "data_input": {
           "options": [
-            "Hombre",
-            "Mujer"
+            "Femenino",
+            "Masculino"
           ],
           "description": null,
           "sub_type": "dropdown",
           "type": "options",
-          "title": "Género"
+          "title": "Sexo"
         }
       }
     },
     {
-      "id": "ef42302d-3c17-4e69-9925-fa92fd62a365",
+      "id": "9a9a029c-71d2-4441-9051-63f3b0459a15",
       "config": {
         "tool": {
-          "id": "6",
-          "name": "Número",
-          "description": "Permite al usuario ingresar un valor numérico",
+          "id": "4",
+          "name": "Texto corto",
+          "description": "Permite al usuario esribir un texto de maximo 100 carácteres.",
           "place_holder": "Escribe tu respuesta aquí",
           "on_action": null
         },
-        "color": "#FDE68A",
+        "color": "#C6E2F9",
         "is_gather": true,
         "is_channel": true
       },
       "schema_gather": {
-        "id": "4b15df0b-5372-40a7-811d-275e5bbbdbe0",
+        "id": "18a68d92-2c33-4aae-b37b-c5ae1487e4c8",
         "name": "número telefónico",
-        "type_value": "number",
+        "type_value": "text",
         "is_module_attr": true,
         "is_unique": false,
         "is_optional": false,
@@ -533,8 +533,8 @@
           "options": [],
           "schema_input": [],
           "rules": {},
-          "id": "61236451-0c0d-416c-8cc1-5308925fe0d5",
-          "value": "Número Telefónico"
+          "id": "ec0ea1b4-10d6-439d-9eb4-a50aa976c180",
+          "value": "Número telefónico"
         },
         {
           "name": "description",
@@ -550,78 +550,29 @@
           "options": [],
           "schema_input": [],
           "rules": {},
-          "id": "d6d6e6d3-5bbe-4399-b3cc-580f6315f947"
+          "id": "bfd914ef-f1e9-4ed6-b08e-697e66c6143f"
         },
         {
           "name": "type",
           "type_input": "text",
           "is_hidden": true,
-          "value": "number"
-        }
-      ],
-      "schema_input_advanced": [
-        {
-          "name": "min",
-          "display_name": "Número mínimo",
-          "place_holder": "0-9999999999999",
-          "description": "",
-          "type_input": "number",
-          "is_increasing": false,
-          "is_optional": true,
-          "options": [],
-          "schema_input": [],
-          "rules": {
-            "number": [
-              {
-                "type_rule": "min",
-                "value": {
-                  "$numberInt": "0"
-                }
-              },
-              {
-                "type_rule": "max",
-                "value": {
-                  "$numberLong": "9999999999999"
-                }
-              }
-            ]
-          },
-          "value": "0"
+          "value": "text"
         },
         {
-          "name": "max",
-          "display_name": "Número máximo",
-          "place_holder": "0-9999999999999",
-          "description": "",
+          "name": "max_length",
           "type_input": "number",
-          "is_increasing": false,
-          "is_optional": true,
-          "options": [],
-          "schema_input": [],
-          "rules": {
-            "number": [
-              {
-                "type_rule": "min",
-                "value": {
-                  "$numberInt": "0"
-                }
-              },
-              {
-                "type_rule": "max",
-                "value": {
-                  "$numberLong": "9999999999999"
-                }
-              }
-            ]
-          },
-          "value": "9999999999"
+          "is_hidden": true,
+          "value": {
+            "$numberInt": "100"
+          }
         }
       ],
+      "schema_input_advanced": [],
       "schema_variables": [],
       "schema_conditions": [
         {
-          "id": "ad538d5e-f2f4-4cd8-b20d-674a434c39c4",
-          "next_instruction_id": "52ab5dae-5931-4d49-b49b-d0cefebc47de",
+          "id": "467b380b-ecb9-4726-8681-113afc94286f",
+          "next_instruction_id": "6e39070c-c647-4fcb-9bb4-12d471ddcfe3",
           "type_condition": "by_success"
         }
       ],
@@ -630,16 +581,17 @@
       },
       "metadata": {
         "data_input": {
-          "max": "9999999999",
-          "min": "0",
-          "type": "number",
+          "max_length": {
+            "$numberInt": "100"
+          },
+          "type": "text",
           "description": null,
-          "title": "Número Telefónico"
+          "title": "Número telefónico"
         }
       }
     },
     {
-      "id": "52ab5dae-5931-4d49-b49b-d0cefebc47de",
+      "id": "6e39070c-c647-4fcb-9bb4-12d471ddcfe3",
       "config": {
         "tool": {
           "id": "12",
@@ -671,7 +623,7 @@
           "options": [],
           "schema_input": [],
           "rules": {},
-          "id": "ff5eca0a-353a-43d4-91bc-72ca70e52660",
+          "id": "cd88bc18-bd7e-40e1-bc77-dd9ba674492c",
           "value": "{{ dni }}"
         },
         {
@@ -688,7 +640,7 @@
           "options": [],
           "schema_input": [],
           "rules": {},
-          "id": "79bdca3a-9b51-4fd5-8bfb-e1d61d85827b",
+          "id": "d15b06aa-ed01-4d8c-975e-f80d8dfd6e56",
           "value": "{{ nombre }}"
         }
       ],
@@ -716,7 +668,7 @@
       ],
       "schema_conditions": [
         {
-          "id": "d36d452f-81d1-4e3b-a18c-44469ba9007c",
+          "id": "a394a975-2bc3-4299-8534-6ef8670d8e57",
           "next_instruction_id": "",
           "type_condition": "by_success"
         }
@@ -732,7 +684,7 @@
       }
     }
   ],
-  "module_id": "31c8d11c-f3f7-4fed-bee7-304323988ef8",
+  "module_id": "id del modulo relacionado",
   "schema_gather_summary": [],
-  "created_at": "Wed Sep 25 2024 10:53:42 GMT-0500 (hora estándar de Colombia)"
+  "created_at": "Tue Sep 10 2024 09:17:55 GMT-0500 (hora estándar de Perú)"
 }

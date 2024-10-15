@@ -1,10 +1,12 @@
-import { RealmProvider, useApp } from '@realm/react'
-import React from 'react'
+import { RealmProvider, useApp, useRealm } from '@realm/react'
+import React, { useEffect } from 'react'
 import Realm from 'realm'
-import { ModuleSchema } from '../features/modules/model/ModuleSchema'
+import { ModuleSchema } from './models/ModuleSchema'
 import { useSecureStorage } from '../contexts/secure/SecureStorageContext'
 import { LoadingStore } from '../components/loading/LoadingFull'
-import { UserSchema } from '../features/users/model/UserSchema'
+import { UserSchema } from './models/UserSchema'
+import { ModuleSchemaSchema } from './models/ModuleSchemaSchema'
+import { useRealmQueries } from '../hooks/useRealmQueries'
 
 export const RealmAuth = ({ children }: any) => {
   const app = useApp()
@@ -13,11 +15,14 @@ export const RealmAuth = ({ children }: any) => {
     type: Realm.OpenRealmBehaviorType.OpenImmediately
   }
 
-  const schemas = [ModuleSchema, UserSchema]
+  const schemas = [ModuleSchema, ModuleSchemaSchema, UserSchema]
 
   if (!app?.currentUser?.id || !storageMMKV) {
     return <LoadingStore />
   }
+
+  const dataJWT = getDataJWT()
+
   return (
     <RealmProvider
       schema={schemas}
@@ -28,28 +33,15 @@ export const RealmAuth = ({ children }: any) => {
           rerunOnOpen: true,
           update: (mutableSubs, realm) => {
             try {
-              const dataJWT = getDataJWT()
               const users = realm
                 .objects('User')
                 .filtered('tenant == $0', dataJWT?.tenant)
               const modules = realm
                 .objects('Module')
                 .filtered('tenant == $0', dataJWT?.tenant)
-              // const person = realm
-              //   .objects('PersonEntity')
-              //   .filtered('tenant == $0', user?.data?.tenant)
-              // const country = realm.objects('Country')
-              // const department = realm.objects('Department')
-              // const province = realm.objects('Province')
-              // const district = realm.objects('District')
 
               mutableSubs.add(users, { name: 'usersSubscription' })
               mutableSubs.add(modules, { name: 'modulesSubscription' })
-              // mutableSubs.add(person, { name: 'personSubscription' })
-              // mutableSubs.add(country, { name: 'countrySubscription' })
-              // mutableSubs.add(department, { name: 'departmentSubscription' })
-              // mutableSubs.add(province, { name: 'provinceSubscription' })
-              // mutableSubs.add(district, { name: 'districtSubscription' })
             } catch (error) {
               console.error('Error in initialSubscriptions:', error)
             }
@@ -58,11 +50,44 @@ export const RealmAuth = ({ children }: any) => {
         newRealmFileBehavior: realmAccessBehavior,
         existingRealmFileBehavior: realmAccessBehavior,
         onError: (session, error) => {
-          console.log('session => ', session.connectionState)
-          console.error('error => ', error.message)
+          console.log('Session connectionState => ', session.connectionState)
+          console.error('Sync error => ', error.message)
         }
       }}>
-      {children}
+      <AllProcesses children={children} />
     </RealmProvider>
   )
+}
+
+// por si hay que agregar más procesos después de la sincronización inicial
+const AllProcesses = ({ children }: any) => {
+  const { getModules } = useRealmQueries()
+  const realm = useRealm()
+
+  useEffect(() => {
+    const subscribeToModuleSchemas = async () => {
+      try {
+        await realm.subscriptions.update(mutableSubs => {
+          const schemaIds = getModules?.map(
+            module => module?.schema_id
+          ) as string[]
+          if (schemaIds.length > 0) {
+            mutableSubs.add(
+              realm.objects('ModuleSchema').filtered('id IN $0', schemaIds),
+              { name: 'moduleSchemaSubscription' }
+            )
+          }
+        })
+      } catch (error) {
+        console.error('Error updating subscriptions:', error)
+      }
+    }
+
+    // Verifica que existan módulos antes de intentar la suscripción
+    if (getModules?.length > 0) {
+      subscribeToModuleSchemas()
+    }
+  }, [getModules, realm])
+
+  return children
 }

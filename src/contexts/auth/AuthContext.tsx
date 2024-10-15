@@ -5,7 +5,7 @@ import React, {
   ReactNode,
   useEffect
 } from 'react'
-import { KEYS_MMKV } from '../../config/mmkv'
+import { KEYS_MMKV } from '../../db/mmkv'
 import { getDataFromJWT } from '../../utils/jwt'
 import { useAuth } from '@realm/react'
 import { useSecureStorage } from '../secure/SecureStorageContext'

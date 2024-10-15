@@ -6,7 +6,7 @@ import React, {
   useState
 } from 'react'
 import { MMKV } from 'react-native-mmkv'
-import { getSecureStorage, KEYS_MMKV } from '../../config/mmkv'
+import { getSecureStorage, KEYS_MMKV } from '../../db/mmkv'
 import { getDataFromJWT } from '../../utils/jwt'
 
 type StorageValueType = string | number | boolean | null

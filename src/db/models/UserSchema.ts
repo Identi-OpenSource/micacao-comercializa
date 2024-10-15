@@ -30,19 +30,19 @@ export type User = {
   roles: Realm.List<string>
   scopes: Realm.List<string>
   sms_number?: string
-  tenant?: string
+  tenant: string
   type?: string
   updated_at?: string
   user_status?: string
   username?: string
-  uuid?: string
+  uuid: string
   wsp_number?: string
 }
 
 export const UserSchema = {
   name: 'User',
   properties: {
-    _id: 'objectId?',
+    _id: 'objectId',
     cell_number: 'string?',
     country: 'string?',
     country_id: 'string?',
@@ -65,12 +65,12 @@ export const UserSchema = {
     roles: 'string[]',
     scopes: 'string[]',
     sms_number: 'string?',
-    tenant: 'string?',
+    tenant: 'string',
     type: 'string?',
     updated_at: 'string?',
     user_status: 'string?',
     username: 'string?',
-    uuid: 'string?',
+    uuid: 'string',
     wsp_number: 'string?'
   },
   primaryKey: '_id'

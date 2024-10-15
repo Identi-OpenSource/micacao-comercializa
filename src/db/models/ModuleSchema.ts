@@ -12,6 +12,7 @@ export type Module = {
   schema_id: string
   tenant: string
   type_view?: string
+  is_conditional?: boolean
 }
 
 export const ModuleSchema = {
@@ -27,7 +28,8 @@ export const ModuleSchema = {
     name: 'string?',
     schema_id: 'string',
     tenant: 'string',
-    type_view: 'string?'
+    type_view: 'string?',
+    is_conditional: 'bool?'
   },
   primaryKey: '_id'
 }

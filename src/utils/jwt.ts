@@ -9,6 +9,5 @@ export const getDataFromJWT = (jwt: string) => {
   const isDateValid =
     new Date().getTime() <
     new Date(jsonData.exp * 1000)?.getTime() - minValidity
-  // console.log('jsonData', jsonData)
-  return { ...jsonData, isDateValid } // isDateValid is la fecha es valida
+  return { ...jsonData, isDateValid }
 }

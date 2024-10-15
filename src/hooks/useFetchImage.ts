@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { API_CONFIG } from '../config/apis'
-import { AuthResponse } from '../models/Auth'
+import { AuthResponse } from '../db/models/Auth'
 import useCustomHttpRequest from './useCustomHttpRequest'
 import RNFS from 'react-native-fs'
 
