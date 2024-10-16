@@ -18,6 +18,11 @@ type ModuleSchemaConfig = {
   is_channel: boolean
 }
 
+type schema_gather_option = {
+  id: string
+  value: string
+}
+
 type schema_gather = {
   id: string
   name: string
@@ -27,6 +32,7 @@ type schema_gather = {
   is_optional: boolean
   is_representative: boolean
   is_visual_table: string
+  option: schema_gather_option[]
 }
 
 export type schema_input = {
@@ -45,6 +51,23 @@ export type ModuleSchemaInstruction = {
   schema_conditions: Realm.List<ModuleSchemaCondition>
   schema_gather: schema_gather
   schema_input: Realm.List<any>
+  metadata: {
+    data_input: {
+      title: string
+      max_length?: string
+      min_length?: string
+      min?: string
+      max?: string
+      type: string
+      description: string
+      entity_type?: Realm.List<{
+        id: string
+        display_name: string
+        description: string
+      }>
+      [key: string]: string | number | boolean | undefined | object
+    }
+  }
 }
 
 export type ModuleSchema = {

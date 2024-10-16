@@ -5,6 +5,8 @@ import { useSecureStorage } from '../contexts/secure/SecureStorageContext'
 import { useMemo } from 'react'
 import { ModuleSchema } from '../db/models/ModuleSchemaSchema'
 import { BSON } from 'realm'
+import { PersonEntity } from '../db/models/PersonEntitySchema'
+import { GLOBALS } from '../config/consts'
 
 export const useRealmQueries = () => {
   const { getDataJWT } = useSecureStorage()
@@ -14,6 +16,7 @@ export const useRealmQueries = () => {
   const allModules = useQuery<Module>('Module')
   const allModuleSchemas = useQuery<ModuleSchema>('ModuleSchema')
   const users = useQuery<User>('User')
+  const personEntity = useQuery<PersonEntity>('PersonEntity')
 
   const getModules = useMemo(() => {
     return allModules.filtered('tenant == $0', tenant)
@@ -31,10 +34,31 @@ export const useRealmQueries = () => {
     return user.length > 0 ? user[0] : undefined
   }, [uuidUser, users])
 
+  const getPersonEntity = useMemo(() => {
+    const persons = personEntity.filtered('tenant == $0', tenant)
+    return persons.length > 0 ? persons : undefined
+  }, [uuidUser])
+
+  const getAllEntities = useMemo(
+    () => (entity: string) => {
+      switch (entity) {
+        case GLOBALS.entity_type.PER:
+        case GLOBALS.entity_type.PERSON:
+          return getPersonEntity
+
+        default:
+          break
+      }
+    },
+    []
+  )
+
   return {
     getModules,
     getModuleSchemaById,
-    getUser
+    getUser,
+    getPersonEntity,
+    getAllEntities
   }
 }
 

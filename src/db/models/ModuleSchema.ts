@@ -1,10 +1,12 @@
 import Realm from 'realm'
 
+export type EntityType = 'PERSON' | 'ORGANIZATION' | 'OBJECT' | 'COMPLEMENTARY'
+
 export type Module = {
   _id: Realm.BSON.ObjectId
   active_end_at?: string
   active_init_at?: string
-  entity_type?: string
+  entity_type?: EntityType
   id: string
   image_path?: string
   module_type?: string

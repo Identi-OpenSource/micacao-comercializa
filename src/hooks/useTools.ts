@@ -1,12 +1,209 @@
 import { InpText } from '../components/inputs/text/InpText'
-import i18n from '../contexts/i18n/i18n'
 import {
   ModuleSchema,
   ModuleSchemaInstruction
 } from '../db/models/ModuleSchemaSchema'
 import * as Yup from 'yup'
+import { InpOpt } from '../components/inputs/opt/InpOpt'
+import { GLOBALS } from '../config/consts'
+import { Module } from '../db/models/ModuleSchema'
+import { PersonEntity } from '../db/models/PersonEntitySchema'
+import i18n from '../contexts/i18n/i18n'
+import { InpTypes } from '../components/inputs/types'
+import { InpOptEntity } from '../components/inputs/optEntity/InpOptEntity'
 
+// BLOQUE 1: FUNCIONES PARA VALIDACIONES
+const createValidationSchema = (
+  inst: ModuleSchemaInstruction,
+  module: Module,
+  getAllEntities: (entity: string) => any
+) => {
+  let schema
+
+  // Creamos el esquema en función del tipo de dato
+  switch (inst.schema_gather?.type_value) {
+    case 'number':
+      schema = Yup.number().typeError(i18n.t('numberType'))
+      break
+    case 'entity':
+    case 'option':
+    case 'options':
+      schema = Yup.object().test('atLeastOne', i18n.t('atLeastOne'), obj => {
+        return Object.keys(obj).length > 0
+      })
+      break
+    default:
+      schema = Yup.string() // Para otros casos, usamos string por defecto
+      break
+  }
+
+  // Aplicar restricciones adicionales (min, max, etc.)
+  if (inst.metadata.data_input.max && !(schema instanceof Yup.ObjectSchema)) {
+    schema = schema.max(
+      Number(inst.metadata.data_input.max),
+      i18n.t('max', { values: { max: Number(inst.metadata.data_input.max) } })
+    )
+  }
+  if (inst.metadata.data_input.min && !(schema instanceof Yup.ObjectSchema)) {
+    schema = schema.min(
+      Number(inst.metadata.data_input.min),
+      i18n.t('min', { values: { min: Number(inst.metadata.data_input.min) } })
+    )
+  }
+  if (
+    inst.metadata.data_input.min_length &&
+    !(schema instanceof Yup.ObjectSchema)
+  ) {
+    schema = schema.min(
+      Number(inst.metadata.data_input.min_length),
+      i18n.t('minLengthString', {
+        values: { minLength: Number(inst.metadata.data_input.min_length) }
+      })
+    )
+  }
+  if (
+    inst.metadata.data_input.max_length &&
+    !(schema instanceof Yup.ObjectSchema)
+  ) {
+    schema = schema.max(
+      Number(inst.metadata.data_input.max_length),
+      i18n.t('maxLengthString', {
+        values: { maxLength: Number(inst.metadata.data_input.max_length) }
+      })
+    )
+  }
+
+  // Es requerido
+  if (
+    !inst?.schema_gather?.is_optional &&
+    inst.metadata.data_input.type !== 'option'
+  ) {
+    schema = schema.required(i18n.t('required'))
+  }
+
+  // Validación de unicidad
+  if (
+    inst?.schema_gather?.is_unique &&
+    inst.metadata.data_input.type === 'text' &&
+    (schema instanceof Yup.StringSchema || schema instanceof Yup.NumberSchema)
+  ) {
+    if (schema instanceof Yup.StringSchema) {
+      schema = schema.test('unique', i18n.t('unique'), (value: string = '') => {
+        return checkUniqueValue(value, inst, module, getAllEntities)
+      })
+    } else if (schema instanceof Yup.NumberSchema) {
+      schema = schema.test('unique', i18n.t('unique'), (value: number = 0) => {
+        return checkUniqueValue(value, inst, module, getAllEntities)
+      })
+    }
+  }
+
+  return schema
+}
+
+// Función para verificar si el valor es único dentro de un módulo
+const checkUniqueValue = (
+  value: string | number,
+  inst: ModuleSchemaInstruction,
+  module: Module | null,
+  getAllEntities: (entity: string) => any
+): boolean => {
+  const entityType = module?.entity_type
+    ? GLOBALS.entity_type[module.entity_type]
+    : ''
+  const entities = getAllEntities(entityType) as PersonEntity[]
+
+  return !entities.some(entity =>
+    entity.module_detail?.some(
+      detail => detail?.id === inst.schema_gather.id && detail.value === value
+    )
+  )
+}
+
+// BLOQUE 2: FUNCIONES PARA CREAR ENTRADAS (INPUTS)
+const createInput = (
+  inst: ModuleSchemaInstruction,
+  getAllEntities: (entity: string) => any
+): InpTypes => {
+  const inp: InpTypes = {
+    id: inst.id,
+    name: inst.id,
+    title: inst.metadata.data_input.title,
+    description: inst.metadata.data_input.description,
+    type: inst.metadata.data_input.type,
+    component: determineComponent(inst),
+    inputMode: determineInputMode(inst)
+  }
+
+  if (
+    inst.schema_gather?.type_value === 'option' ||
+    inst.schema_gather?.type_value === 'options'
+  ) {
+    inp.options = inst.schema_gather.option?.map(opt => ({
+      id: opt.id,
+      label: opt.value,
+      value: { id: opt.id, label: opt.value }
+    }))
+    inp.disabled = true
+  }
+
+  if (inst.schema_gather?.type_value === 'entity') {
+    inst.metadata.data_input.entity_type?.forEach(entity => {
+      const entities = getAllEntities(entity?.description) as PersonEntity[]
+      inp.options = entities?.map(ent => {
+        const representative = ent?.module_detail?.find(
+          en => en.is_representative || en?.name === 'nombre'
+        )
+        return {
+          id: ent?.id as string,
+          label: representative?.value as string,
+          value: {
+            id: ent?.id as string,
+            label: representative?.value as string
+          }
+        }
+      })
+    })
+    inp.disabled = true
+  }
+
+  return inp
+}
+
+// Función auxiliar para determinar el componente según el tipo de entrada
+const determineComponent = (inst: ModuleSchemaInstruction) => {
+  switch (inst.schema_gather?.type_value) {
+    case 'text':
+    case 'number':
+      return InpText
+    case 'option':
+    case 'options':
+      return InpOpt
+    case 'entity':
+      return InpOptEntity
+    default:
+      return InpText // Por defecto, se usa el componente de texto
+  }
+}
+
+// Función auxiliar para determinar el modo de entrada según el tipo de entrada
+const determineInputMode = (inst: ModuleSchemaInstruction) => {
+  switch (inst.schema_gather?.type_value) {
+    case 'number':
+      return 'numeric'
+    case 'entity':
+    case 'option':
+    case 'options':
+      return 'none'
+    case 'text':
+    default:
+      return 'text'
+  }
+}
+
+// BLOQUE 3: FUNCIONES PRINCIPALES DEL HOOK
 export const useTools = () => {
+  // Ordena las instrucciones de manera vertical según las condiciones del esquema
   const instructionOrderVertical = (
     moduleSchema: ModuleSchema
   ): ModuleSchemaInstruction[] => {
@@ -28,56 +225,45 @@ export const useTools = () => {
     return instructionsInOrder
   }
 
-  const instructionsGather = (instructions: ModuleSchemaInstruction[]) => {
-    const ins = instructions.filter(inst => inst.config.is_gather)
+  // Generar los inputs y esquemas de validación
+  const instructionsGather = (
+    instructions: ModuleSchemaInstruction[],
+    module: Module,
+    getAllEntities: (entity: string) => any
+  ) => {
+    const gatheredInstructions = instructions.filter(
+      inst => inst.config.is_gather
+    )
     const inputs: any[] = []
     const initialValues: { [key: string]: any } = {}
-    let schemaValidation: any = {}
-    const shape: { [key: string]: any } = {}
-    ins.forEach(inst => {
-      let schema: any
-      const inp = {
-        id: inst.id,
-        name: inst.id,
-        title: inst.schema_input.find(input => input.name === 'title')?.value,
-        description: inst.schema_input.find(
-          input => input.name === 'description'
-        )?.description,
-        type: inst.schema_input.find(input => input.name === 'type')?.value,
-        component: InpText
-      }
-      initialValues[inp.name] = ''
-      switch (inp.type) {
-        case 'text':
-          schema = Yup.string()
-          inp.component = InpText
-          break
+    const validationSchema: { [key: string]: any } = {}
 
-        case 'number':
-          schema = Yup.number().typeError(i18n.t('numberType'))
-          inp.component = InpText
-          break
-
-        case 'option':
-        case 'options':
-          schema = Yup.string()
-          inp.component = InpText
-          break
-
-        default:
-          schema = Yup.string()
-          break
-      }
-
-      if (!inst?.schema_gather?.is_optional) {
-        schema = schema.required(i18n.t('required'))
-      }
-      shape[inp.name] = schema
-      inputs.push(inp)
+    gatheredInstructions.forEach(inst => {
+      const input = createInput(inst, getAllEntities)
+      inputs.push(input)
+      initialValues[input.name] = ''
+      validationSchema[input.name] = createValidationSchema(
+        inst,
+        module,
+        getAllEntities
+      )
     })
-    schemaValidation = Yup.object().shape(shape)
-    return { inputs, initialValues, schemaValidation }
+
+    return {
+      inputs,
+      initialValues,
+      schemaValidation: Yup.object().shape(validationSchema)
+    }
   }
 
-  return { instructionOrderVertical, instructionsGather }
+  // Instrucciones post gather
+  const instructionsNoGather = (instructions: ModuleSchemaInstruction[]) => {
+    return instructions.filter(inst => !inst.config.is_gather)
+  }
+
+  return {
+    instructionOrderVertical,
+    instructionsGather,
+    instructionsNoGather
+  }
 }

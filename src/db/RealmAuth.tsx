@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import { RealmProvider, useApp, useRealm } from '@realm/react'
 import React, { useEffect } from 'react'
 import Realm from 'realm'
@@ -7,6 +8,10 @@ import { LoadingStore } from '../components/loading/LoadingFull'
 import { UserSchema } from './models/UserSchema'
 import { ModuleSchemaSchema } from './models/ModuleSchemaSchema'
 import { useRealmQueries } from '../hooks/useRealmQueries'
+import {
+  PersonEntity_locationSchema,
+  PersonEntitySchema
+} from './models/PersonEntitySchema'
 
 export const RealmAuth = ({ children }: any) => {
   const app = useApp()
@@ -15,7 +20,13 @@ export const RealmAuth = ({ children }: any) => {
     type: Realm.OpenRealmBehaviorType.OpenImmediately
   }
 
-  const schemas = [ModuleSchema, ModuleSchemaSchema, UserSchema]
+  const schemas = [
+    ModuleSchema,
+    ModuleSchemaSchema,
+    UserSchema,
+    PersonEntity_locationSchema,
+    PersonEntitySchema
+  ]
 
   if (!app?.currentUser?.id || !storageMMKV) {
     return <LoadingStore />
@@ -39,9 +50,15 @@ export const RealmAuth = ({ children }: any) => {
               const modules = realm
                 .objects('Module')
                 .filtered('tenant == $0', dataJWT?.tenant)
+              const personEntity = realm
+                .objects('PersonEntity')
+                .filtered('tenant == $0', dataJWT?.tenant)
 
               mutableSubs.add(users, { name: 'usersSubscription' })
               mutableSubs.add(modules, { name: 'modulesSubscription' })
+              mutableSubs.add(personEntity, {
+                name: 'personEntitySubscription'
+              })
             } catch (error) {
               console.error('Error in initialSubscriptions:', error)
             }

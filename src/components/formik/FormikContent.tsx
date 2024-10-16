@@ -21,7 +21,6 @@ export const FormikContent = ({
   onSubmit
 }: FormikContentProps) => {
   const { theme } = useTheme()
-  console.log('initialValues', initialValues)
   const styles = {
     padding: theme.spacing.medium
   }
@@ -30,7 +29,7 @@ export const FormikContent = ({
       initialValues={initialValues}
       validationSchema={schemaValidation}
       onSubmit={values => onSubmit(values)}>
-      {({ handleSubmit, values }) => (
+      {({ handleSubmit }) => (
         <ScrollView style={styles}>
           {inputs.map((input: any) => {
             return <Field key={input.name} {...input} />

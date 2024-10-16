@@ -1,6 +1,7 @@
 {
   "cSpell.words": [
     "BSON",
+    "camelcase",
     "caracters",
     "consts",
     "encriptación",
@@ -8,6 +9,7 @@
     "keychain",
     "Keychain",
     "Manejador",
+    "micacao",
     "mmkv",
     "MMKV",
     "reutilizable",
