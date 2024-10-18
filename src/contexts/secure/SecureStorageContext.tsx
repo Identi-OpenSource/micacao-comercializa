@@ -50,7 +50,7 @@ export const SecureStorageProvider = ({ children }: SecureStorageProps) => {
     if (!storage) {
       throw new Error('Storage is not initialized')
     }
-    return storage.getString(key) as StorageValueType
+    return (storage.getString(key) as StorageValueType) ?? null
   }
 
   const getDataJWT = (): any => {

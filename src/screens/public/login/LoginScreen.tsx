@@ -8,12 +8,12 @@ import i18n from '../../../contexts/i18n/i18n'
 import useCustomHttpRequest from '../../../hooks/useCustomHttpRequest'
 import { API_CONFIG } from '../../../config/apis'
 import Config from 'react-native-config'
-import useErrorHandler from '../../../hooks/useErrorHandler'
 import { AxiosError } from 'axios'
-import useSecureStorage from '../../../hooks/useSecureStorage'
 import { KEYS_MMKV } from '../../../db/mmkv'
 import { AuthResponse } from '../../../db/models/Auth'
 import { useAuthLocal } from '../../../contexts/auth/AuthContext'
+import { useSecureStorage } from '../../../contexts/secure/SecureStorageContext'
+import useMessageHandler from '../../../hooks/useErrorHandler'
 
 // Constantes
 const { width } = Dimensions.get('window')
@@ -24,7 +24,7 @@ export const LoginScreen: React.FC = () => {
   const [isLoading, setIsLoading] = React.useState(false)
   const { post } = useCustomHttpRequest()
   const { setItem } = useSecureStorage()
-  const handleError = useErrorHandler()
+  const { handleErrorMessage } = useMessageHandler()
   const { login } = useAuthLocal()
 
   const formik = useLoginFormik(async values => {
@@ -41,7 +41,7 @@ export const LoginScreen: React.FC = () => {
       setItem(KEYS_MMKV.REFRESH_TOKEN, resp.data.refresh_token)
       await login(resp?.data?.access_token)
     } catch (err) {
-      handleError(err as AxiosError)
+      handleErrorMessage(err as AxiosError)
     } finally {
       setIsLoading(false)
     }

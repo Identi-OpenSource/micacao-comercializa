@@ -10,6 +10,7 @@ export type FormikContentProps = {
   inputs: any
   initialValues: any
   schemaValidation: any
+  isLoading: boolean
   onSubmit: (values: any) => void
 }
 
@@ -18,6 +19,7 @@ export const FormikContent = ({
   inputs,
   initialValues,
   schemaValidation,
+  isLoading = false,
   onSubmit
 }: FormikContentProps) => {
   const { theme } = useTheme()
@@ -38,7 +40,12 @@ export const FormikContent = ({
           <Button
             title={i18n.t('save')}
             onPress={() => handleSubmit()}
-            containerStyle={{ marginTop: theme.spacing.large }}
+            disabled={isLoading}
+            loading={isLoading}
+            containerStyle={{
+              marginTop: theme.spacing.xLarge,
+              marginBottom: theme.spacing.xxxLarge
+            }}
           />
         </ScrollView>
       )}

@@ -12,6 +12,21 @@ import {
   PersonEntity_locationSchema,
   PersonEntitySchema
 } from './models/PersonEntitySchema'
+import {
+  ComplementaryEntity_entity_relationsSchema,
+  ComplementaryEntity_locationSchema,
+  ComplementaryEntity_module_detail_optionSchema,
+  ComplementaryEntity_module_detailSchema,
+  ComplementaryEntitySchema
+} from './models/ComplementaryEntitySchema'
+import {
+  ObjectEntity_locationSchema,
+  ObjectEntitySchema
+} from './models/ObjectEntitySchema'
+import { CountrySchema } from './models/CountrySchema'
+import { ProvinceSchema } from './models/ProvinceSchema'
+import { DepartmentSchema } from './models/DepartmentSchema'
+import { DistrictSchema } from './models/DistrictSchema'
 
 export const RealmAuth = ({ children }: any) => {
   const app = useApp()
@@ -25,7 +40,18 @@ export const RealmAuth = ({ children }: any) => {
     ModuleSchemaSchema,
     UserSchema,
     PersonEntity_locationSchema,
-    PersonEntitySchema
+    PersonEntitySchema,
+    ComplementaryEntity_module_detail_optionSchema,
+    ComplementaryEntity_module_detailSchema,
+    ComplementaryEntity_locationSchema,
+    ComplementaryEntity_entity_relationsSchema,
+    ComplementaryEntitySchema,
+    ObjectEntity_locationSchema,
+    ObjectEntitySchema,
+    CountrySchema,
+    ProvinceSchema,
+    DepartmentSchema,
+    DistrictSchema
   ]
 
   if (!app?.currentUser?.id || !storageMMKV) {
@@ -33,7 +59,6 @@ export const RealmAuth = ({ children }: any) => {
   }
 
   const dataJWT = getDataJWT()
-
   return (
     <RealmProvider
       schema={schemas}
@@ -53,12 +78,27 @@ export const RealmAuth = ({ children }: any) => {
               const personEntity = realm
                 .objects('PersonEntity')
                 .filtered('tenant == $0', dataJWT?.tenant)
+              const objectEntity = realm
+                .objects('ObjectEntity')
+                .filtered('tenant == $0', dataJWT?.tenant)
+
+              const country = realm.objects('Country')
+              const department = realm.objects('Department')
+              const province = realm.objects('Province')
+              const district = realm.objects('District')
 
               mutableSubs.add(users, { name: 'usersSubscription' })
               mutableSubs.add(modules, { name: 'modulesSubscription' })
               mutableSubs.add(personEntity, {
                 name: 'personEntitySubscription'
               })
+              mutableSubs.add(objectEntity, {
+                name: 'objectEntitySubscription'
+              })
+              mutableSubs.add(country, { name: 'countrySubscription' })
+              mutableSubs.add(department, { name: 'departmentSubscription' })
+              mutableSubs.add(province, { name: 'provinceSubscription' })
+              mutableSubs.add(district, { name: 'districtSubscription' })
             } catch (error) {
               console.error('Error in initialSubscriptions:', error)
             }

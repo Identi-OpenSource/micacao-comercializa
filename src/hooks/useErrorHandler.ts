@@ -1,12 +1,15 @@
 import { useCallback, useContext } from 'react'
 import { AxiosError } from 'axios'
 import { DialogContext } from '../contexts/alerts/DialogContext'
+import i18n from '../contexts/i18n/i18n'
+
+export type typeMessage = 'error' | 'success' | 'warning' | 'info' | 'default'
 
 // Hook personalizado para manejar errores y mostrar diálogos
-const useErrorHandler = () => {
+const useMessageHandler = () => {
   const { showDialog } = useContext(DialogContext)!
   // Función para manejar los errores
-  const handleError = useCallback((error: AxiosError) => {
+  const handleErrorMessage = useCallback((error: AxiosError) => {
     let title = 'Error'
     let message = 'Ocurrió un error inesperado'
     let onClose = () => {
@@ -62,7 +65,17 @@ const useErrorHandler = () => {
     })
   }, [])
 
-  return handleError
+  const handleMessage = (type: typeMessage, message: string) => {
+    showDialog({
+      title: i18n.t(type),
+      message: i18n.t(message),
+      onClose: () => {
+        console.log('Diálogo cerrado')
+      }
+    })
+  }
+
+  return { handleErrorMessage, handleMessage }
 }
 
-export default useErrorHandler
+export default useMessageHandler

@@ -1,21 +1,83 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native'
-import { InpTextProps } from '../types'
+import { InpTextProps, OptionsItem } from '../types'
 import { Input } from '@rneui/base'
 import { Dialog, ListItem } from '@rneui/themed'
+import { useRealmQueries } from '../../../hooks/useRealmQueries'
+import { firstLetterOfEachWordCapitalized } from '../../../utils/textsUtils'
 
 export const InpOpt = (props: InpTextProps) => {
   const [visible, setVisible] = useState(false)
+  const [options, setOptions] = useState<OptionsItem[]>(props.options ?? [])
   const {
     field: { onBlur, name, value },
-    form: { errors, touched, setFieldValue }
+    form: { errors, touched, setFieldValue, values }
   } = props
   const input = React.useRef<any>(null)
   const isError = errors[name] !== undefined && touched[name]
 
+  // OPCIONES DE LOCACIÓN, MIENTRAS ES MANUAL
+  const { getCountry, getDepartment, getProvince, getDistrict } =
+    useRealmQueries()
+  useEffect(() => {
+    // Mapa de funciones según el nombre del campo, con `fetch` como una función o directamente los datos
+    const optionsMap: { [key: string]: { fetch: any; depValue?: string } } = {
+      country_id: { fetch: getCountry },
+      department_id: { fetch: getDepartment(values.country_id?.id) },
+      province_id: { fetch: getProvince(values.department_id?.id) },
+      district_id: { fetch: getDistrict(values.province_id?.id) }
+    }
+
+    // Verifica si el `name` actual está en el mapa
+    if (name in optionsMap) {
+      const { fetch } = optionsMap[name]
+
+      // Aquí `fetch` ya es el resultado (no es una función), por lo que mapeamos directamente
+      const data = fetch
+      // Mapea las opciones si los datos existen
+      const opts = data?.map((item: any) => ({
+        id: item?.id as string,
+        label: firstLetterOfEachWordCapitalized(item?.name) as string,
+        value: {
+          id: item?.id as string,
+          label: firstLetterOfEachWordCapitalized(item?.name) as string
+        }
+      }))
+
+      // Asignar las opciones
+      setOptions(opts)
+    }
+  }, [
+    values?.country_id?.id,
+    values?.department_id?.id,
+    values?.province_id?.id
+  ])
+
+  const resetValue = () => {
+    switch (name) {
+      case 'country_id':
+        setFieldValue('department_id', '')
+        setFieldValue('province_id', '')
+        setFieldValue('district_id', '')
+        break
+      case 'department_id':
+        setFieldValue('province_id', '')
+        setFieldValue('district_id', '')
+        break
+      case 'province_id':
+        setFieldValue('district_id', '')
+        break
+      default:
+        break
+    }
+  }
+
+  // FIN OPCIONES DE LOCACIÓN
+
   const onPressItem = (val: { id: string; label: string }) => {
     setFieldValue(name, val)
     setVisible(!visible)
+    resetValue()
   }
 
   return (
@@ -33,10 +95,13 @@ export const InpOpt = (props: InpTextProps) => {
           errorMessage={isError ? (errors[name] as string) : undefined}
         />
       </TouchableOpacity>
-      <Dialog isVisible={visible} overlayStyle={styles.overlay}>
+      <Dialog
+        isVisible={visible}
+        overlayStyle={styles.overlay}
+        onBackdropPress={() => setVisible(false)}>
         <Dialog.Title title={props?.title} />
         <ScrollView showsVerticalScrollIndicator={false}>
-          {props?.options?.map(item => (
+          {options.map(item => (
             <ListItem key={item?.id} onPress={() => onPressItem(item?.value)}>
               <ListItem.Content>
                 <ListItem.Title>{item?.label}</ListItem.Title>

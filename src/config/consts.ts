@@ -7,7 +7,9 @@ export const GLOBALS = {
     PER: 'PERSON', // para que vallan a la misma tabla PersonEntity
     PERSON: 'PersonEntity',
     ORGANIZATION: 'OrganizationEntities',
+    OBJ: 'OBJECT',
     OBJECT: 'ObjectEntity',
+    COMP: 'COMPLEMENTARY',
     COMPLEMENTARY: 'ComplementaryEntity'
   }
 }

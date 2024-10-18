@@ -45,12 +45,24 @@ export type schema_input = {
   value: string
 }
 
+type SchemaVariables = {
+  name: string
+  description: string
+  type_value: string
+  list_type_value: string
+  is_module_attr: boolean
+  is_visual_table: string
+  is_representative: boolean
+  is_condition: boolean
+}
+
 export type ModuleSchemaInstruction = {
   id: string
   config: ModuleSchemaConfig
   schema_conditions: Realm.List<ModuleSchemaCondition>
   schema_gather: schema_gather
   schema_input: Realm.List<any>
+  schema_variables: Realm.List<SchemaVariables>
   metadata: {
     data_input: {
       title: string

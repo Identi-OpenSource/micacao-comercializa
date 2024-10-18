@@ -1,5 +1,12 @@
 import { FieldProps } from 'formik'
 import React from 'react'
+
+export type OptionsItem = {
+  id: string
+  label: string
+  value: { id: string; label: string }
+}
+
 export type InpTypes = {
   id: string
   name: string
@@ -9,11 +16,7 @@ export type InpTypes = {
   component?: React.FC<any>
   inputMode?: string
   disabled?: boolean
-  options?: {
-    id: string
-    label: string
-    value: { id: string; label: string }
-  }[]
+  options?: OptionsItem[]
 }
 
 export type InpTextProps = {
