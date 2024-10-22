@@ -28,7 +28,7 @@ const handleResponse = <T>(response: AxiosResponse<T>): T => {
 
 // Función general para las solicitudes HTTP
 const handleRequest = async <T>(
-  method: 'get' | 'post' | 'put' | 'delete',
+  method: 'get' | 'post' | 'put' | 'patch' | 'delete',
   url: string,
   data?: any,
   config?: AxiosRequestConfig
@@ -106,6 +106,8 @@ const useCustomHttpRequest = () => {
       handleRequest<T>('post', url, data, config),
     put: <T>(url: string, data?: any, config?: AxiosRequestConfig) =>
       handleRequest<T>('put', url, data, config),
+    patch: <T>(url: string, data?: any, config?: AxiosRequestConfig) =>
+      handleRequest<T>('patch', url, data, config),
     delete: <T>(url: string, config?: AxiosRequestConfig) =>
       handleRequest<T>('delete', url, undefined, config)
   }

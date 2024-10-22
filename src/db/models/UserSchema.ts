@@ -2,6 +2,7 @@ import Realm from 'realm'
 
 export const CONST_USER = {
   status: {
+    confirmed: 'CONFIRMED',
     force_change_password: 'FORCE_CHANGE_PASSWORD'
   }
 }

@@ -81,6 +81,9 @@ export const RealmAuth = ({ children }: any) => {
               const objectEntity = realm
                 .objects('ObjectEntity')
                 .filtered('tenant == $0', dataJWT?.tenant)
+              const complementaryEntity = realm
+                .objects('ComplementaryEntity')
+                .filtered('tenant == $0', dataJWT?.tenant)
 
               const country = realm.objects('Country')
               const department = realm.objects('Department')
@@ -94,6 +97,9 @@ export const RealmAuth = ({ children }: any) => {
               })
               mutableSubs.add(objectEntity, {
                 name: 'objectEntitySubscription'
+              })
+              mutableSubs.add(complementaryEntity, {
+                name: 'complementaryEntitySubscription'
               })
               mutableSubs.add(country, { name: 'countrySubscription' })
               mutableSubs.add(department, { name: 'departmentSubscription' })

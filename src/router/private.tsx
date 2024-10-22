@@ -25,7 +25,7 @@ const PrivateStack = () => {
     <Stack.Navigator>
       {/* <Stack.Screen name="Home" component={HomeScreen} /> */}
       {userStatus === CONST_USER.status.force_change_password ? (
-        <Stack.Group>
+        <Stack.Group screenOptions={{ headerShown: false }}>
           <Stack.Screen name="ChangePassword" component={ChangePassword} />
         </Stack.Group>
       ) : (

@@ -29,7 +29,7 @@ export const AddEntity = () => {
   const insOrder = instructionOrderVertical(moduleSchema)
   const insGather = instructionsGather(insOrder, module, getAllEntities)
   // const insNoGather = instructionsNoGather(insOrder)
-  console.log('module?.schema_id', module?.schema_id)
+
   const onSubmit = async (values: any) => {
     setIsLoading(true)
     const isSave = await saveEntity({ values, module, instructions: insOrder })

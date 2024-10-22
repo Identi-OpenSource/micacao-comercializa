@@ -72,6 +72,7 @@ export type ModuleSchemaInstruction = {
       max?: string
       type: string
       description: string
+      backref?: string
       entity_type?: Realm.List<{
         id: string
         display_name: string

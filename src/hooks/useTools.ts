@@ -164,7 +164,14 @@ const createInput = (
           label: representative?.value as string,
           value: {
             id: ent?.id as string,
-            label: representative?.value as string
+            label: representative?.value as string,
+            entity_id: ent?.id,
+            detail_id: inst?.schema_gather?.id,
+            module_name: entity?.display_name,
+            entity_type: entity?.description,
+            schema_gather: inst?.schema_gather?.id,
+            backref: inst?.metadata?.data_input?.backref,
+            representative_value: representative?.value
           }
         }
       })

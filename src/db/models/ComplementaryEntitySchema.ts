@@ -47,7 +47,7 @@ export const ComplementaryEntity_module_detailSchema = {
 
 export type ComplementaryEntity_entity_relations = {
   backref?: string
-  created_at?: string
+  created_at?: Date
   detail_id?: string
   entity_id?: string
   entity_type?: string
@@ -80,7 +80,7 @@ export const ComplementaryEntity_entity_relationsSchema = {
   embedded: true,
   properties: {
     backref: 'string?',
-    created_at: 'string?',
+    created_at: 'date?',
     detail_id: 'string?',
     entity_id: 'string?',
     entity_type: 'string?',

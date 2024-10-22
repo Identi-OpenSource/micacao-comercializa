@@ -9,7 +9,8 @@ export const inputsErrors: Translations = {
     unique: 'Must be unique',
     min: 'Minimum {{min}} characters',
     max: 'Maximum {{max}} characters',
-    atLeastOne: 'At least one element'
+    atLeastOne: 'At least one element',
+    passwordNotMatch: 'Passwords do not match'
   },
   ES: {
     required: 'Obligatorio',
@@ -19,6 +20,7 @@ export const inputsErrors: Translations = {
     unique: 'Debe ser único',
     min: 'Mínimo {{min}} caracteres',
     max: 'Máximo {{max}} caracteres',
-    atLeastOne: 'Al menos un elemento'
+    atLeastOne: 'Al menos un elemento',
+    passwordNotMatch: 'Las contraseñas no coinciden'
   }
 }
