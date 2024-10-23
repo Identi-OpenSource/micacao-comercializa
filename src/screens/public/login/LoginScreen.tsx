@@ -104,7 +104,7 @@ const useLoginFormik = (
   return useFormik<LoginValues>({
     initialValues: {
       username: /* '', */ 'mmcdonald',
-      password: /* '', */ '3whsd8'
+      password: /* '', */ '123456'
     },
     validationSchema: getLoginSchema(),
     onSubmit
