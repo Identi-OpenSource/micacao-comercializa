@@ -83,9 +83,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace "com.collectorapp"
+    namespace "digital.identi.micacao.comercializa"
     defaultConfig {
-        applicationId "com.collectorapp"
+        applicationId "digital.identi.micacao.comercializa"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
