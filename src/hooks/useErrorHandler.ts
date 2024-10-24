@@ -59,6 +59,7 @@ const useMessageHandler = () => {
 
     // Mostrar el diálogo con los datos de error
     showDialog({
+      type: 'error',
       title,
       message,
       onClose
