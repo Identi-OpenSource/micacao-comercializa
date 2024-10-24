@@ -65,9 +65,14 @@ const useMessageHandler = () => {
     })
   }, [])
 
-  const handleMessage = (type: typeMessage, message: string) => {
+  const handleMessage = (
+    title: typeMessage,
+    message: string,
+    type?: string
+  ) => {
     showDialog({
-      title: i18n.t(type),
+      type,
+      title: i18n.t(title),
       message: i18n.t(message),
       onClose: () => {
         console.log('Diálogo cerrado')

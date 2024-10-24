@@ -23,7 +23,6 @@ export const ListModules: React.FC = () => {
   const modules = useQuery<Module>('Module')
     .filtered('tenant == $0', tenant)
     .sorted('name')
-
   return (
     <Container showConnection>
       <View style={styles.headerSection}>

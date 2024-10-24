@@ -49,6 +49,50 @@ export const BTN_STYLES = {
   }
 }
 
+export const DIALOG_STYLES = {
+  actionStyle: {
+    flex: 1,
+    justifyContent: 'center',
+    flexDirection: 'row',
+    marginTop: SPACING.xLarge
+  } as ViewStyle,
+  buttonStylePrimary: {
+    width: '100%',
+    backgroundColor: COLORS.primary,
+    borderRadius: 5,
+    paddingVertical: 10
+  } as ViewStyle,
+  dialog: {
+    backgroundColor: COLORS.white,
+    borderRadius: 10,
+    width: '85%',
+    borderWidth: 1,
+    borderColor: COLORS.primary
+  } as ViewStyle,
+  dialogError: {
+    borderColor: 'red'
+  },
+  backdropStyle: {
+    backgroundColor: 'rgba(0, 0, 0, 0.2)'
+  },
+  title: {
+    textAlign: 'center',
+    fontFamily: FONTS.bold,
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: COLORS.primary
+  } as TextStyle,
+  message: {
+    marginVertical: SPACING.small,
+    fontSize: 16,
+    fontFamily: FONTS.regular,
+    lineHeight: 24,
+    textAlign: 'center',
+    fontWeight: 'bold',
+    color: COLORS.primary
+  } as TextStyle
+}
+
 export const INPUTS_STYLES = {
   title: {
     fontSize: 18,
