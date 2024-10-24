@@ -11,9 +11,9 @@ import { FormikHelpers, useFormik } from 'formik'
 import { Button, Image, Input, Text } from '@rneui/themed'
 import { Dimensions, StyleSheet, View } from 'react-native'
 import * as Yup from 'yup'
-import { COLORS } from '../../../contexts/theme/defaultTheme'
 import { useQuery, useRealm } from '@realm/react'
 import { CONST_USER, User } from '../../../db/models/UserSchema'
+import { SPACING, COLORS, FONTS } from '../../../contexts/theme/mccTheme'
 // Constantes
 const { width } = Dimensions.get('window')
 const LOGO = require('../../../assets/img/logo.png')
@@ -69,18 +69,20 @@ export const ChangePassword = () => {
       <View style={styles.formikContainer}>
         <FormInput
           field="password"
+          label={i18n.t('password')}
           formik={formik}
           secureTextEntry
           placeholder={i18n.t('password')}
         />
         <FormInput
           field="repassword"
+          label={i18n.t('repassword')}
           formik={formik}
           secureTextEntry
           placeholder={i18n.t('repassword')}
         />
         <FormButton
-          title={i18n.t('changePasswordBtn', { modifier: 'uppercase' })}
+          title={i18n.t('changePasswordBtn', { modifier: 'capitalize' })}
           isLoading={isLoading}
           onPress={formik.handleSubmit}
         />
@@ -127,6 +129,7 @@ const useLoginFormik = (
 
 // Tipos para el componente FormInput
 interface FormInputProps {
+  label: string
   placeholder: string
   field: keyof LoginValues
   formik: ReturnType<typeof useLoginFormik>
@@ -134,19 +137,17 @@ interface FormInputProps {
 }
 
 // Componente de Input
-const FormInput: React.FC<FormInputProps> = ({
-  placeholder,
-  field,
-  formik,
-  secureTextEntry = false
-}) => {
+const FormInput: React.FC<FormInputProps> = props => {
+  const { field, formik, secureTextEntry = false } = props
   return (
     <Input
-      placeholder={placeholder}
+      {...props}
       onChangeText={formik.handleChange(field)}
       onBlur={formik.handleBlur(field)}
       value={formik.values[field]}
       secureTextEntry={secureTextEntry}
+      inputStyle={styles.input}
+      inputContainerStyle={styles.inputContainer}
       errorMessage={
         formik.touched[field] && formik.errors[field]
           ? formik.errors[field]
@@ -184,43 +185,60 @@ const FormButton: React.FC<FormButtonProps> = ({
 
 // Estilos
 const styles = StyleSheet.create({
+  title: {
+    textAlign: 'center',
+    color: COLORS.primary
+  },
+  text: {
+    fontFamily: FONTS.regular,
+    fontSize: 16,
+    lineHeight: 26,
+    paddingHorizontal: SPACING.xxLarge,
+    textAlign: 'center',
+    color: COLORS.primary
+  },
   container: {
-    flex: 1
+    flex: 1,
+    backgroundColor: COLORS.background
   },
   logoContainer: {
-    marginTop: width * 0.2,
     alignItems: 'center',
-    height: 160,
+    height: 200,
     width
   },
   logo: {
-    width: width * 0.6,
-    height: 100,
+    width,
+    height: 150,
     resizeMode: 'contain'
   },
   formikContainer: {
-    marginTop: width * 0.1,
+    marginTop: width * 0.2,
     alignItems: 'center',
     paddingHorizontal: 20
   },
   buttonContainer: {
     width: '100%',
-    marginTop: width * 0.1,
-    paddingHorizontal: 10
+    marginTop: SPACING.xLarge,
+    paddingHorizontal: SPACING.small
   },
   buttonStyle: {
     backgroundColor: COLORS.primary,
     borderRadius: 5,
     paddingVertical: 10,
-    height: 50
+    height: 60
   },
   buttonTitle: {
     fontWeight: '700'
   },
-  text: {
-    paddingHorizontal: 20,
-    fontSize: 16,
-    color: COLORS.text,
-    marginTop: 10
+  inputContainer: {
+    borderColor: COLORS.primary,
+    borderWidth: 1,
+    borderRadius: 5,
+    marginTop: SPACING.small,
+    paddingHorizontal: SPACING.small
+  },
+  input: {
+    color: COLORS.primary,
+    fontSize: 16
   }
 })
