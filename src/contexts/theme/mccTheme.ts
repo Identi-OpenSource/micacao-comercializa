@@ -1,3 +1,4 @@
+import { TextStyle, ViewStyle } from 'react-native'
 import { ThemePros } from './defaultTheme'
 
 export const SPACING = {
@@ -28,13 +29,33 @@ export const FONTS = {
   bold: 'Roboto-Bold'
 }
 
+export const BTN_STYLES = {
+  primary: {
+    buttonContainer: {
+      width: '100%',
+      marginTop: SPACING.xLarge,
+      paddingHorizontal: SPACING.small
+    } as ViewStyle,
+    buttonTitle: {
+      fontWeight: '700',
+      fontFamily: FONTS.bold
+    } as TextStyle,
+    buttonStyle: {
+      backgroundColor: COLORS.primary,
+      borderRadius: 5,
+      paddingVertical: 10,
+      height: 60
+    } as ViewStyle
+  }
+}
+
 export const INPUTS_STYLES = {
   title: {
     fontSize: 18,
-    fontWeight: 'bold',
-    color: COLORS.text,
+    fontWeight: '900',
+    color: COLORS.primary,
     marginTop: 10
-  },
+  } as TextStyle,
   description: {
     fontSize: 14,
     fontWeight: 'normal',
@@ -42,12 +63,23 @@ export const INPUTS_STYLES = {
   },
   inp: {
     fontSize: 18,
-    fontWeight: 'normal',
-    color: COLORS.text
-  }
+    fontWeight: '700',
+    color: COLORS.primary,
+    opacity: 0.6
+  } as TextStyle,
+  impContainer: {
+    borderColor: COLORS.primary,
+    borderBottomWidth: 1
+  } as ViewStyle,
+  inpOpt: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: COLORS.primary,
+    opacity: 0.6
+  } as TextStyle
 }
 
-const neutralTheme = {
+const mccTheme = {
   spacing: SPACING,
   colors: COLORS,
   fonts: FONTS,
@@ -63,4 +95,4 @@ const neutralTheme = {
   }
 } as ThemePros
 
-export default neutralTheme
+export default mccTheme

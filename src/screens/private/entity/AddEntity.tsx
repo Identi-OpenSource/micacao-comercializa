@@ -4,13 +4,14 @@ import {
   useNavigation,
   useRoute
 } from '@react-navigation/native'
-import React, { useState } from 'react'
+import React, { useLayoutEffect, useState } from 'react'
 import { useRealmQueries } from '../../../hooks/useRealmQueries'
 import { RootStackParamList } from '../../../router/private'
 import { useTools } from '../../../hooks/useTools'
 import { FormikContent } from '../../../components/formik/FormikContent'
 import { Module } from '../../../db/models/ModuleSchema'
 import useMessageHandler from '../../../hooks/useErrorHandler'
+import { Container } from '../../../components/container/Container'
 
 export const AddEntity = () => {
   const [isLoading, setIsLoading] = useState(false)
@@ -29,6 +30,10 @@ export const AddEntity = () => {
   const insOrder = instructionOrderVertical(moduleSchema)
   const insGather = instructionsGather(insOrder, module, getAllEntities)
   // const insNoGather = instructionsNoGather(insOrder)
+
+  useLayoutEffect(() => {
+    navigation.setOptions({ title: module?.name })
+  }, [module])
 
   const onSubmit = async (values: any) => {
     setIsLoading(true)
@@ -50,5 +55,9 @@ export const AddEntity = () => {
     onSubmit
   }
 
-  return <FormikContent {...propsFormikContent} />
+  return (
+    <Container>
+      <FormikContent {...propsFormikContent} />
+    </Container>
+  )
 }

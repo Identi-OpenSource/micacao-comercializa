@@ -5,6 +5,7 @@ import { Input } from '@rneui/base'
 import { Dialog, ListItem } from '@rneui/themed'
 import { useRealmQueries } from '../../../hooks/useRealmQueries'
 import { firstLetterOfEachWordCapitalized } from '../../../utils/textsUtils'
+import { COLORS, INPUTS_STYLES } from '../../../contexts/theme/mccTheme'
 
 export const InpOpt = (props: InpTextProps) => {
   const [visible, setVisible] = useState(false)
@@ -93,19 +94,29 @@ export const InpOpt = (props: InpTextProps) => {
           onChangeText={text => setFieldValue(name, text)}
           onBlur={onBlur(name)}
           errorMessage={isError ? (errors[name] as string) : undefined}
+          labelProps={{ style: INPUTS_STYLES.title }}
+          inputStyle={INPUTS_STYLES.inp}
+          inputContainerStyle={INPUTS_STYLES.impContainer}
+          placeholderTextColor={COLORS.grayOpacity}
         />
       </TouchableOpacity>
       <Dialog
         isVisible={visible}
         overlayStyle={styles.overlay}
         onBackdropPress={() => setVisible(false)}>
-        <Dialog.Title title={props?.title} />
+        <Dialog.Title title={props?.title} titleStyle={INPUTS_STYLES.title} />
         <ScrollView showsVerticalScrollIndicator={false}>
           {options.map(item => (
-            <ListItem key={item?.id} onPress={() => onPressItem(item?.value)}>
+            <ListItem
+              key={item?.id}
+              onPress={() => onPressItem(item?.value)}
+              bottomDivider>
               <ListItem.Content>
-                <ListItem.Title>{item?.label}</ListItem.Title>
+                <ListItem.Title style={INPUTS_STYLES.inpOpt}>
+                  {item?.label}
+                </ListItem.Title>
               </ListItem.Content>
+              <ListItem.Chevron size={20} color={COLORS.primary} />
             </ListItem>
           ))}
         </ScrollView>
