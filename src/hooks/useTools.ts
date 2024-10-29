@@ -1,4 +1,3 @@
-/* eslint-disable no-case-declarations */
 import { InpText } from '../components/inputs/text/InpText'
 import {
   ModuleSchema,
@@ -16,6 +15,8 @@ import useNetInfo from './useNetInfo'
 import { replaceValuesKeysKeys } from '../utils/functions'
 import { useSecureStorage } from '../contexts/secure/SecureStorageContext'
 import { KEYS_MMKV } from '../db/mmkv'
+import axios from 'axios'
+import { useRealmQueries } from './useRealmQueries'
 
 // BLOQUE 1: FUNCIONES PARA VALIDACIONES
 const createValidationSchema = (
@@ -238,8 +239,11 @@ const determineInputMode = (inst: ModuleSchemaInstruction) => {
 }
 
 // BLOQUE 3: FUNCIONES PRINCIPALES DEL HOOK
+const insAxios = axios.create()
+
 export const useTools = () => {
   const { getItem, setItem } = useSecureStorage()
+  const { saveRelationPostOffline } = useRealmQueries()
   const connectionStatus = useNetInfo()
   // Ordena las instrucciones de manera vertical según las condiciones del esquema
   const instructionOrderVertical = (
@@ -312,36 +316,45 @@ export const useTools = () => {
     return instructions.filter(inst => !inst.config.is_gather)
   }
 
-  const runInstructionPostGather = (
-    values: { [key: string]: any },
-    instructions: ModuleSchemaInstruction[],
-    module: Module | null
-  ) => {
-    instructions.forEach(inst => {
-      switch (inst.config.tool.on_action.type) {
+  const runInstructionPostGather = async () => {
+    console.log('runInstructionPostGather')
+    const stackPostGather = JSON.parse(
+      (getItem(KEYS_MMKV.POST_GATHER_STACK) as string) || '[]'
+    )
+    for (let i = stackPostGather.length - 1; i >= 0; i--) {
+      const instruction = stackPostGather[i].inst as ModuleSchemaInstruction
+      switch (instruction?.config?.tool?.on_action?.type) {
         case 'api':
-          const apiTool = {
-            _id: values._id,
-            id: values.id,
-            entity_type: module?.entity_type,
-            url: inst.config.tool.on_action.location,
-            api_key: inst.config.tool.on_action.api_key,
-            type_tool: inst.config.tool.on_action.type_tool,
-            schema_variables: inst.schema_variables,
-            payload: replaceValuesKeysKeys(inst.metadata.data_input, values)
+          if (connectionStatus) {
+            try {
+              const resp = await insAxios.post<any>(
+                instruction.config.tool.on_action.location,
+                replaceValuesKeysKeys(
+                  instruction?.metadata?.data_input,
+                  stackPostGather[i]?.values
+                ),
+                {
+                  headers: {
+                    apiKey: instruction.config.tool.on_action.api_key,
+                    tenant: stackPostGather[i].module.tenant,
+                    module_session_id: stackPostGather[i].entity_id
+                  }
+                }
+              )
+              await saveRelationPostOffline(resp, stackPostGather[i])
+              stackPostGather.splice(i, 1)
+            } catch (error) {
+              console.error('Error runInstructionPostGather:', error)
+            }
           }
-          const stackPostGather = JSON.parse(
-            (getItem(KEYS_MMKV.POST_GATHER_STACK) as string) || '[]'
-          )
-          stackPostGather.push(apiTool)
-          setItem(KEYS_MMKV.POST_GATHER_STACK, JSON.stringify(stackPostGather))
           break
 
         default:
+          console.log('default')
           break
       }
-    })
-    console.log('connectionStatus', connectionStatus)
+    }
+    setItem(KEYS_MMKV.POST_GATHER_STACK, JSON.stringify(stackPostGather))
   }
 
   return {

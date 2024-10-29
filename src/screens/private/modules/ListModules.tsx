@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useQuery } from '@realm/react'
 import { Module } from '../../../db/models/ModuleSchema'
 import {
@@ -9,20 +9,33 @@ import {
   View
 } from 'react-native'
 import { useFetchImage } from '../../../hooks/useFetchImage'
-import { NavigationProp, useNavigation } from '@react-navigation/native'
+import {
+  NavigationProp,
+  useIsFocused,
+  useNavigation
+} from '@react-navigation/native'
 import { RootStackParamList } from '../../../router/private'
 import { useSecureStorage } from '../../../contexts/secure/SecureStorageContext'
 import { Container } from '../../../components/container/Container'
 import { COLORS, FONTS, SPACING } from '../../../contexts/theme/defaultTheme'
 import { Image, Text, Icon } from '@rneui/themed'
 import i18n from '../../../contexts/i18n/i18n'
+import { useTools } from '../../../hooks/useTools'
 
 export const ListModules: React.FC = () => {
+  const isFocused = useIsFocused()
   const { getDataJWT } = useSecureStorage()
+  const { runInstructionPostGather } = useTools()
   const tenant = getDataJWT()?.tenant
   const modules = useQuery<Module>('Module')
     .filtered('tenant == $0', tenant)
     .sorted('name')
+
+  useEffect(() => {
+    if (isFocused) {
+      runInstructionPostGather()
+    }
+  }, [isFocused])
   return (
     <Container showConnection>
       <View style={styles.headerSection}>
@@ -48,6 +61,11 @@ interface RenderItemProps {
 const RenderItem: React.FC<RenderItemProps> = ({ item }) => {
   const { imagePath } = useFetchImage(item?.image_path)
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
+  if (
+    item.name?.trim().toLowerCase().replace(/\s+/g, '') === 'registrodeparcela'
+  ) {
+    return
+  }
   return (
     <View style={styles.container}>
       <TouchableOpacity

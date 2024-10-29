@@ -108,8 +108,8 @@ const useLoginFormik = (
 ) => {
   return useFormik<LoginValues>({
     initialValues: {
-      username: /* '', */ 'mmcdonald',
-      password: /* '', */ '123456'
+      username: '',
+      password: ''
     },
     validationSchema: getLoginSchema(),
     onSubmit
@@ -136,6 +136,8 @@ const FormInput: React.FC<FormInputProps> = props => {
       value={formik.values[field]}
       secureTextEntry={secureTextEntry}
       inputStyle={styles.input}
+      autoCapitalize="none"
+      autoCorrect={false}
       inputContainerStyle={styles.inputContainer}
       errorMessage={
         formik.touched[field] && formik.errors[field]
