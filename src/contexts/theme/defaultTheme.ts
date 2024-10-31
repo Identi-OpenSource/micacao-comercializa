@@ -1,5 +1,5 @@
 import { StatusBarProps, StyleProp, TextStyle } from 'react-native'
-import neutralTheme from './neutralTheme'
+import mccTheme from './mccTheme'
 
 export type INPUTS_STYLES = {
   title: StyleProp<TextStyle>
@@ -51,12 +51,8 @@ export const SPACING = {
 export const COLORS = {
   white: '#ffffff',
   primary: '#09304F',
-  background: '#f0f0f0',
-  text: '#333333',
-  buttonBackground: '#666666',
-  buttonText: '#ffffff',
-  inputBackground: '#e0e0e0',
-  inputText: '#333333'
+  inputText: '#333333',
+  grayOpacity: 'rgba(0, 0, 0, 0.3)'
 }
 
 export const FONTS = {
@@ -64,4 +60,4 @@ export const FONTS = {
   bold: 'Roboto-Bold'
 }
 
-export default neutralTheme
+export default mccTheme

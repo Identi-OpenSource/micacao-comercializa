@@ -59,15 +59,21 @@ const useMessageHandler = () => {
 
     // Mostrar el diálogo con los datos de error
     showDialog({
+      type: 'error',
       title,
       message,
       onClose
     })
   }, [])
 
-  const handleMessage = (type: typeMessage, message: string) => {
+  const handleMessage = (
+    title: typeMessage,
+    message: string,
+    type?: string
+  ) => {
     showDialog({
-      title: i18n.t(type),
+      type,
+      title: i18n.t(title),
       message: i18n.t(message),
       onClose: () => {
         console.log('Diálogo cerrado')

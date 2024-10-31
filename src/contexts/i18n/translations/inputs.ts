@@ -2,6 +2,7 @@ import { Translations } from '../translations'
 
 export const inputs: Translations = {
   default: {
+    user: 'User',
     username: 'Username',
     password: 'Password',
     repassword: 'Repeat password',
@@ -11,6 +12,7 @@ export const inputs: Translations = {
     district: 'District'
   },
   ES: {
+    user: 'Usuario',
     username: 'Nombre de usuario',
     password: 'Contraseña',
     repassword: 'Repetir contraseña',

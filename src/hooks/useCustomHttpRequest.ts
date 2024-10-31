@@ -34,7 +34,6 @@ const handleRequest = async <T>(
   config?: AxiosRequestConfig
 ): Promise<T> => {
   try {
-    console.log(method.toUpperCase(), url)
     const response: AxiosResponse<T> = await axios({
       method,
       url,
@@ -79,8 +78,8 @@ const useCustomHttpRequest = () => {
         const errorRsp = error.response
         const isLogout = errorRsp?.status === 401 || errorRsp?.status === 417
         if (isLogout && getItem(KEYS_MMKV.ACCESS_TOKEN)) {
-          clearMMKV()
-          navigation.navigate('LoginScreen' as never)
+          // clearMMKV()
+          // navigation.navigate('LoginScreen' as never)
         }
         return Promise.reject(error)
       }

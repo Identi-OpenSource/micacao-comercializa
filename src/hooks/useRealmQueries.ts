@@ -274,8 +274,8 @@ export const useRealmQueries = () => {
     id: string,
     doc: any
   ) => {
-    let POST_GATHER_STACK = !connectionStatus
-    if (connectionStatus) {
+    let POST_GATHER_STACK = connectionStatus
+    if (!connectionStatus) {
       try {
         const resp = await insAxios.post<any>(
           inst.config.tool.on_action.location,
@@ -296,7 +296,7 @@ export const useRealmQueries = () => {
     }
 
     if (POST_GATHER_STACK) {
-      addToPostGatherStack(values, inst, module.entity_type)
+      addToPostGatherStack(values, inst, module, id)
     }
   }
 
@@ -334,13 +334,17 @@ export const useRealmQueries = () => {
   const addToPostGatherStack = (
     values: any,
     inst: ModuleSchemaInstruction,
-    entityType: string
+    module: Module,
+    id: string
   ) => {
     const apiTool = {
       _id: values._id,
       id: values.id,
-      entity_type: entityType,
-      inst
+      entity_type: module.entity_type,
+      inst,
+      values,
+      entity_id: id,
+      module
     }
     const stackPostGather = JSON.parse(
       (getItem(KEYS_MMKV.POST_GATHER_STACK) as string) || '[]'
@@ -380,6 +384,24 @@ export const useRealmQueries = () => {
     }
   }
 
+  // saveRelation post offline
+
+  const saveRelationPostOffline = async (resp: any, item: any) => {
+    try {
+      const entityType = GLOBALS.entity_type[item?.entity_type as EntityType]
+      const doc = realm
+        .objects(entityType)
+        .filtered('id == $0', item?.entity_id)[0]
+      if (doc) {
+        realm.write(() => {
+          processApiResponse(resp, item?.inst, doc)
+        })
+      }
+    } catch (error) {
+      console.error('Error al guardar la relación:', error)
+    }
+  }
+
   return {
     saveEntity,
     getModules,
@@ -391,7 +413,8 @@ export const useRealmQueries = () => {
     getDepartment,
     getProvince,
     getDistrict,
-    getModuleById
+    getModuleById,
+    saveRelationPostOffline
   }
 }
 

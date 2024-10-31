@@ -6,6 +6,7 @@ import { CONST_USER, User } from '../db/models/UserSchema'
 import { useSecureStorage } from '../contexts/secure/SecureStorageContext'
 import { ListModules } from '../screens/private/modules/ListModules'
 import { AddEntity } from '../screens/private/entity/AddEntity'
+import { COLORS } from '../contexts/theme/defaultTheme'
 
 export type RootStackParamList = {
   ChangePassword: undefined
@@ -25,16 +26,36 @@ const PrivateStack = () => {
     <Stack.Navigator>
       {/* <Stack.Screen name="Home" component={HomeScreen} /> */}
       {userStatus === CONST_USER.status.force_change_password ? (
-        <Stack.Group screenOptions={{ headerShown: false }}>
+        <Stack.Group
+          screenOptions={{ headerShown: false, statusBarStyle: 'dark' }}>
           <Stack.Screen name="ChangePassword" component={ChangePassword} />
         </Stack.Group>
       ) : (
         <>
-          <Stack.Group>
-            <Stack.Screen name="ListModules" component={ListModules} />
+          <Stack.Group screenOptions={{ headerShown: false }}>
+            <Stack.Screen
+              name="ListModules"
+              component={ListModules}
+              options={{
+                statusBarStyle: 'dark'
+              }}
+            />
           </Stack.Group>
           <Stack.Group>
-            <Stack.Screen name="AddEntity" component={AddEntity} />
+            <Stack.Screen
+              name="AddEntity"
+              component={AddEntity}
+              options={{
+                headerShown: true,
+                headerStyle: {
+                  backgroundColor: COLORS.primary
+                },
+                statusBarAnimation: 'slide',
+                statusBarColor: COLORS.primary,
+                statusBarStyle: 'light',
+                headerTintColor: COLORS.white
+              }}
+            />
           </Stack.Group>
         </>
       )}

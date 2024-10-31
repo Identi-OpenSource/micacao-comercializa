@@ -27,8 +27,8 @@ interface AuthProviderProps {
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const { getItem, storageMMKV, clearMMKV } = useSecureStorage()
-  const { logInWithJWT, logOut } = useAuth()
+  const { getItem, storageMMKV /* clearMMKV */ } = useSecureStorage()
+  const { logInWithJWT /* logOut */ } = useAuth()
 
   useEffect(() => {
     if (storageMMKV !== null) {
@@ -39,7 +39,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       if (decoded?.isDateValid /* || decodedRefresh?.isDateValid */) {
         login(token)
       } else {
-        logout()
+        // logout() // Para que no se cierre la sesión
       }
     }
   }, [storageMMKV])
@@ -55,10 +55,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   }
 
   const logout = () => {
-    clearMMKV()
-    setIsAuthenticated(false)
+    // clearMMKV()
+    // setIsAuthenticated(false)
     // logout realm y atlas, esto cambia si se usa otra base de datos
-    logOut()
+    // logOut()
   }
 
   return (

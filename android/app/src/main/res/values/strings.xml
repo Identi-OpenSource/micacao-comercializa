@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">collectorApp</string>
+    <string name="app_name">MiCacao Comercializa</string>
+    <color name="white">#FFFFFF</color>
 </resources>

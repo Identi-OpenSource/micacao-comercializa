@@ -4,6 +4,7 @@ import { ScrollView } from 'react-native'
 import { useTheme } from '../../contexts/theme/ThemeContext'
 import { Button } from '@rneui/themed'
 import i18n from '../../contexts/i18n/i18n'
+import { BTN_STYLES } from '../../contexts/theme/mccTheme'
 
 export type FormikContentProps = {
   children?: React.ReactNode
@@ -43,9 +44,11 @@ export const FormikContent = ({
             disabled={isLoading}
             loading={isLoading}
             containerStyle={{
-              marginTop: theme.spacing.xLarge,
-              marginBottom: theme.spacing.xxxLarge
+              marginBottom: theme.spacing.xxxLarge * 2,
+              ...BTN_STYLES.primary.buttonContainer
             }}
+            titleStyle={BTN_STYLES.primary.buttonTitle}
+            buttonStyle={BTN_STYLES.primary.buttonStyle}
           />
         </ScrollView>
       )}

@@ -1,4 +1,4 @@
-package com.collectorapp
+package digital.identi.micacao.comercializa
 
 import android.app.Application
 import com.facebook.react.PackageList

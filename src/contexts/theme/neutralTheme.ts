@@ -14,12 +14,13 @@ export const SPACING = {
 export const COLORS = {
   white: '#ffffff',
   primary: '#09304F',
-  background: '#f0f0f0',
+  background: '#ffffff',
   text: '#333333',
   buttonBackground: '#666666',
   buttonText: '#ffffff',
   inputBackground: '#e0e0e0',
-  inputText: '#333333'
+  inputText: '#333333',
+  grayOpacity: 'rgba(0, 0, 0, 0.3)'
 }
 
 export const FONTS = {

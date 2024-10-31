@@ -6,6 +6,7 @@ project.ext.envConfigFiles = [
     release: ".env.production",
 ]
 apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle"
+apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
 
 
 /**
@@ -83,9 +84,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace "com.collectorapp"
+    namespace "digital.identi.micacao.comercializa"
     defaultConfig {
-        applicationId "com.collectorapp"
+        applicationId "digital.identi.micacao.comercializa"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
