@@ -83,7 +83,9 @@ export const InpOpt = (props: InpTextProps) => {
 
   return (
     <View>
-      <TouchableOpacity onPress={() => setVisible(!visible)} activeOpacity={1}>
+      <TouchableOpacity
+        onPress={() => setVisible(!visible)}
+        activeOpacity={0.8}>
         <Input
           ref={input}
           label={props?.title}

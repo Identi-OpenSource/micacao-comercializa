@@ -117,9 +117,9 @@ const checkUniqueValue = (
   const entityType = module?.entity_type
     ? GLOBALS.entity_type[module.entity_type]
     : ''
+  console.log('entities', entityType)
   const entities = getAllEntities(entityType) as PersonEntity[]
-
-  return !entities.some(entity =>
+  return !entities?.some(entity =>
     entity.module_detail?.some(
       detail => detail?.id === inst.schema_gather.id && detail.value === value
     )
