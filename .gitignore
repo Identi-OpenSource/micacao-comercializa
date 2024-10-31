@@ -79,6 +79,5 @@ yarn-error.log
 .env.development
 .env.production
 .env.test
-
-# Other
-/.env.example
+.env.qa
+.env.production
