@@ -15,6 +15,7 @@ import { useAuthLocal } from '../../../contexts/auth/AuthContext'
 import { useSecureStorage } from '../../../contexts/secure/SecureStorageContext'
 import useMessageHandler from '../../../hooks/useErrorHandler'
 import { SPACING } from '../../../contexts/theme/defaultTheme'
+import { FONTS } from '../../../contexts/theme/mccTheme'
 
 // Constantes
 const { width } = Dimensions.get('window')
@@ -76,6 +77,7 @@ export const LoginScreen: React.FC = () => {
           onPress={formik.handleSubmit}
         />
       </View>
+      <Text style={styles.version}>{Config.VERSION_NAME}</Text>
     </View>
   )
 }
@@ -225,5 +227,14 @@ const styles = StyleSheet.create({
   input: {
     color: COLORS.primary,
     fontSize: 16
+  },
+  version: {
+    position: 'absolute',
+    marginTop: SPACING.large,
+    bottom: SPACING.large,
+    fontFamily: FONTS.regular,
+    textAlign: 'center',
+    color: COLORS.grayOpacity,
+    fontSize: 12
   }
 })
