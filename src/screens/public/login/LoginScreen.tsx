@@ -229,6 +229,7 @@ const styles = StyleSheet.create({
     fontSize: 16
   },
   version: {
+    width: '100%',
     position: 'absolute',
     marginTop: SPACING.large,
     bottom: SPACING.large,
