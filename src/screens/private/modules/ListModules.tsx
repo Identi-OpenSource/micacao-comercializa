@@ -31,11 +31,14 @@ export const ListModules: React.FC = () => {
     .filtered('tenant == $0', tenant)
     .sorted('name')
 
+  console.log('tenant', tenant)
+
   useEffect(() => {
     if (isFocused) {
       runInstructionPostGather()
     }
   }, [isFocused])
+
   return (
     <Container showConnection>
       <View style={styles.headerSection}>
@@ -61,11 +64,11 @@ interface RenderItemProps {
 const RenderItem: React.FC<RenderItemProps> = ({ item }) => {
   const { imagePath } = useFetchImage(item?.image_path)
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
-  if (
+  /*   if (
     item.name?.trim().toLowerCase().replace(/\s+/g, '') === 'registrodeparcela'
   ) {
     return
-  }
+  } */
   return (
     <View style={styles.container}>
       <TouchableOpacity

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Dimensions, StyleSheet, View } from 'react-native'
+import { Dimensions, ScrollView, StyleSheet, View } from 'react-native'
 import { Button, Image, Input, Text } from '@rneui/themed'
 import { useFormik, FormikHelpers } from 'formik'
 import * as Yup from 'yup'
@@ -50,7 +50,7 @@ export const LoginScreen: React.FC = () => {
   })
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={[styles.container]} keyboardShouldPersistTaps="handled">
       <View style={styles.logoContainer}>
         <Image source={LOGO} style={styles.logo} />
       </View>
@@ -76,9 +76,9 @@ export const LoginScreen: React.FC = () => {
           isLoading={isLoading}
           onPress={formik.handleSubmit}
         />
+        <Text style={styles.version}>{Config.VERSION_NAME}</Text>
       </View>
-      <Text style={styles.version}>{Config.VERSION_NAME}</Text>
-    </View>
+    </ScrollView>
   )
 }
 
@@ -110,8 +110,8 @@ const useLoginFormik = (
 ) => {
   return useFormik<LoginValues>({
     initialValues: {
-      username: '',
-      password: ''
+      username: 'agro_app_braud',
+      password: 'Nueva123'
     },
     validationSchema: getLoginSchema(),
     onSubmit
@@ -185,6 +185,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
+    alignContent: 'center',
     backgroundColor: COLORS.background
   },
   logoContainer: {
@@ -229,10 +230,7 @@ const styles = StyleSheet.create({
     fontSize: 16
   },
   version: {
-    width: '100%',
-    position: 'absolute',
-    marginTop: SPACING.large,
-    bottom: SPACING.large,
+    marginVertical: SPACING.xxxLarge * 2,
     fontFamily: FONTS.regular,
     textAlign: 'center',
     color: COLORS.grayOpacity,

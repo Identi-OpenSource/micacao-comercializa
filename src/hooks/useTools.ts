@@ -10,13 +10,26 @@ import { Module } from '../db/models/ModuleSchema'
 import { PersonEntity } from '../db/models/PersonEntitySchema'
 import i18n from '../contexts/i18n/i18n'
 import { InpTypes } from '../components/inputs/types'
-import { InpOptEntity } from '../components/inputs/optEntity/InpOptEntity'
 import useNetInfo from './useNetInfo'
 import { replaceValuesKeysKeys } from '../utils/functions'
 import { useSecureStorage } from '../contexts/secure/SecureStorageContext'
 import { KEYS_MMKV } from '../db/mmkv'
 import axios from 'axios'
 import { useRealmQueries } from './useRealmQueries'
+import { InpGeoRef } from '../components/inputs/polygon/InpGeoRef'
+import { InpPolygon } from '../components/inputs/polygon/InpPolygon'
+// import { InpPolygon } from '../components/inputs/polygon/InpPolygon'
+// import { InpOptEntity } from '../components/inputs/optEntity/InpOptEntity'
+
+export const inputComponents = {
+  text: InpText,
+  number: InpText,
+  options: InpOpt,
+  option: InpOpt,
+  entity: InpOpt,
+  polygon: InpPolygon,
+  location: InpGeoRef
+} as { [key: string]: any }
 
 // BLOQUE 1: FUNCIONES PARA VALIDACIONES
 const createValidationSchema = (
@@ -27,19 +40,21 @@ const createValidationSchema = (
   let schema
 
   // Creamos el esquema en función del tipo de dato
-  switch (inst.schema_gather?.type_value) {
+  switch (inst?.metadata?.data_input?.type || inst.schema_gather?.type_value) {
     case 'number':
       schema = Yup.number().typeError(i18n.t('numberType'))
       break
     case 'entity':
     case 'option':
     case 'options':
+    case 'polygon':
+    case 'location':
       schema = Yup.object().test('atLeastOne', i18n.t('atLeastOne'), obj => {
         return Object.keys(obj).length > 0
       })
       break
     default:
-      schema = Yup.string() // Para otros casos, usamos string por defecto
+      schema = Yup.string()
       break
   }
 
@@ -117,7 +132,7 @@ const checkUniqueValue = (
   const entityType = module?.entity_type
     ? GLOBALS.entity_type[module.entity_type]
     : ''
-  console.log('entities', entityType)
+
   const entities = getAllEntities(entityType) as PersonEntity[]
   return !entities?.some(entity =>
     entity.module_detail?.some(
@@ -136,14 +151,14 @@ const createInput = (
     name: inst.schema_gather.name,
     title: inst.metadata.data_input.title,
     description: inst.metadata.data_input.description,
-    type: inst.metadata.data_input.type,
-    component: determineComponent(inst),
+    type: inst.metadata.data_input.type || inst.schema_gather.type_value,
     inputMode: determineInputMode(inst)
+    // component: determineComponent(inst),
   }
 
   if (
-    inst.schema_gather?.type_value === 'option' ||
-    inst.schema_gather?.type_value === 'options'
+    inst?.metadata?.data_input?.type === 'option' ||
+    inst?.metadata?.data_input?.type === 'options'
   ) {
     inp.options = inst.schema_gather.option?.map(opt => ({
       id: opt.id,
@@ -153,8 +168,18 @@ const createInput = (
     inp.disabled = true
   }
 
-  if (inst.schema_gather?.type_value === 'entity') {
-    inst.metadata.data_input.entity_type?.forEach(entity => {
+  if (
+    inst?.metadata?.data_input?.type === 'option' ||
+    inst?.metadata?.data_input?.type === 'options' ||
+    inst?.metadata?.data_input?.type === 'polygon' ||
+    inst?.schema_gather?.type_value === 'polygon' ||
+    inst?.metadata?.data_input?.type === 'location' ||
+    inst?.schema_gather?.type_value === 'location'
+  ) {
+    inp.disabled = true
+  }
+  if (inst?.schema_gather?.type_value === 'entity') {
+    inst?.metadata?.data_input?.entity_type?.forEach(entity => {
       const entities = getAllEntities(entity?.description) as PersonEntity[]
       inp.options = entities?.map(ent => {
         const representative = ent?.module_detail?.find(
@@ -177,7 +202,6 @@ const createInput = (
         }
       })
     })
-    inp.disabled = true
   }
 
   return inp
@@ -208,29 +232,33 @@ const createLocationInput = () => {
 }
 
 // Función auxiliar para determinar el componente según el tipo de entrada
-const determineComponent = (inst: ModuleSchemaInstruction) => {
-  switch (inst.schema_gather?.type_value) {
-    case 'text':
-    case 'number':
-      return InpText
-    case 'option':
-    case 'options':
-      return InpOpt
-    case 'entity':
-      return InpOptEntity
-    default:
-      return InpText // Por defecto, se usa el componente de texto
-  }
-}
+// const determineComponent = (inst: ModuleSchemaInstruction) => {
+//   switch (inst?.metadata?.data_input?.type || inst.schema_gather?.type_value) {
+//     case 'text':
+//     case 'number':
+//       return InpText
+//     case 'option':
+//     case 'options':
+//       return InpOpt
+//     case 'entity':
+//       return InpOptEntity
+//     case 'polygon':
+//       return InpGeoRef // InpPolygon
+//     default:
+//       return InpText // Por defecto, se usa el componente de texto
+//   }
+// }
 
 // Función auxiliar para determinar el modo de entrada según el tipo de entrada
 const determineInputMode = (inst: ModuleSchemaInstruction) => {
-  switch (inst.schema_gather?.type_value) {
+  switch (inst?.metadata?.data_input?.type) {
     case 'number':
       return 'numeric'
     case 'entity':
     case 'option':
     case 'options':
+    case 'polygon':
+    case 'location':
       return 'none'
     case 'text':
     default:
@@ -250,6 +278,7 @@ export const useTools = () => {
     moduleSchema: ModuleSchema
   ): ModuleSchemaInstruction[] => {
     const instructionsInOrder: ModuleSchemaInstruction[] = []
+    console.log('fffff', moduleSchema.instructions?.length)
     let currentInstruction = moduleSchema.instructions.find(
       inst => inst.id === moduleSchema.instruction_start
     )
@@ -276,6 +305,7 @@ export const useTools = () => {
     const gatheredInstructions = instructions.filter(
       inst => inst.config.is_gather
     )
+    console.log('gatheredInstructions', gatheredInstructions.length)
     const inputs: any[] = []
     const initialValues: { [key: string]: any } = {}
     const validationSchema: { [key: string]: any } = {}

@@ -21,6 +21,7 @@ export type InpTypes = {
 
 export type InpTextProps = {
   title?: string
+  formik: any
   description?: string
   disabled?: boolean
   inputMode?:

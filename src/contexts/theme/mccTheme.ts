@@ -9,7 +9,9 @@ export const SPACING = {
   large: 20,
   xLarge: 25,
   xxLarge: 30,
-  xxxLarge: 40
+  xxxLarge: 40,
+  hitSlop: { top: 60, bottom: 60, left: 10, right: 10 },
+  hitSlopCorto: { top: 20, bottom: 20, left: 10, right: 10 }
 }
 
 export const COLORS = {
@@ -100,12 +102,18 @@ export const INPUTS_STYLES = {
     color: COLORS.primary,
     marginTop: 10
   } as TextStyle,
+  error: {
+    fontSize: 14,
+    fontWeight: 'normal',
+    color: 'red'
+  } as TextStyle,
   description: {
     fontSize: 14,
     fontWeight: 'normal',
     color: COLORS.text
   },
   inp: {
+    height: 60,
     fontSize: 18,
     fontWeight: '700',
     color: COLORS.primary,

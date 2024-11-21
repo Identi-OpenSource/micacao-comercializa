@@ -30,7 +30,6 @@ export const AddEntity = () => {
   const insOrder = instructionOrderVertical(moduleSchema)
   const insGather = instructionsGather(insOrder, module, getAllEntities)
   // const insNoGather = instructionsNoGather(insOrder)
-
   useLayoutEffect(() => {
     navigation.setOptions({ title: module?.name })
   }, [module])

@@ -3,7 +3,11 @@ import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native'
 import { InpTextProps } from '../types'
 import { Input } from '@rneui/base'
 import { Dialog, ListItem } from '@rneui/themed'
-import { COLORS, INPUTS_STYLES } from '../../../contexts/theme/mccTheme'
+import {
+  COLORS,
+  INPUTS_STYLES,
+  SPACING
+} from '../../../contexts/theme/mccTheme'
 
 export const InpOptEntity = (props: InpTextProps) => {
   const [visible, setVisible] = useState(false)
@@ -21,7 +25,10 @@ export const InpOptEntity = (props: InpTextProps) => {
 
   return (
     <View>
-      <TouchableOpacity onPress={() => setVisible(!visible)} activeOpacity={1}>
+      <TouchableOpacity
+        hitSlop={SPACING.hitSlopCorto}
+        onPress={() => setVisible(!visible)}
+        activeOpacity={1}>
         <Input
           ref={input}
           label={props?.title}

@@ -9,7 +9,7 @@ import {
 } from '../../../contexts/theme/mccTheme'
 import { useField, useFormikContext } from 'formik'
 
-export const InpText = (props: InpTextProps) => {
+export const InpPolygon = (props: InpTextProps) => {
   const [field, meta] = useField(props.name)
   const { setFieldValue } = useFormikContext()
   const { onBlur, name } = field

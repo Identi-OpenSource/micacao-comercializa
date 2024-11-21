@@ -5,17 +5,22 @@ import { Input } from '@rneui/base'
 import { Dialog, ListItem } from '@rneui/themed'
 import { useRealmQueries } from '../../../hooks/useRealmQueries'
 import { firstLetterOfEachWordCapitalized } from '../../../utils/textsUtils'
-import { COLORS, INPUTS_STYLES } from '../../../contexts/theme/mccTheme'
+import {
+  COLORS,
+  INPUTS_STYLES,
+  SPACING
+} from '../../../contexts/theme/mccTheme'
+import { useField, useFormikContext } from 'formik'
 
 export const InpOpt = (props: InpTextProps) => {
   const [visible, setVisible] = useState(false)
   const [options, setOptions] = useState<OptionsItem[]>(props.options ?? [])
-  const {
-    field: { onBlur, name, value },
-    form: { errors, touched, setFieldValue, values }
-  } = props
+  const [field, meta] = useField(props.name)
+  const { setFieldValue, values } = useFormikContext()
+  const { onBlur, name, value } = field
+
+  const isError = meta.error !== undefined && meta.touched
   const input = React.useRef<any>(null)
-  const isError = errors[name] !== undefined && touched[name]
 
   // OPCIONES DE LOCACIÓN, MIENTRAS ES MANUAL
   const { getCountry, getDepartment, getProvince, getDistrict } =
@@ -24,9 +29,9 @@ export const InpOpt = (props: InpTextProps) => {
     // Mapa de funciones según el nombre del campo, con `fetch` como una función o directamente los datos
     const optionsMap: { [key: string]: { fetch: any; depValue?: string } } = {
       country_id: { fetch: getCountry },
-      department_id: { fetch: getDepartment(values.country_id?.id) },
-      province_id: { fetch: getProvince(values.department_id?.id) },
-      district_id: { fetch: getDistrict(values.province_id?.id) }
+      department_id: { fetch: getDepartment((values as any).country_id?.id) },
+      province_id: { fetch: getProvince((values as any).department_id?.id) },
+      district_id: { fetch: getDistrict((values as any).province_id?.id) }
     }
 
     // Verifica si el `name` actual está en el mapa
@@ -49,9 +54,9 @@ export const InpOpt = (props: InpTextProps) => {
       setOptions(opts)
     }
   }, [
-    values?.country_id?.id,
-    values?.department_id?.id,
-    values?.province_id?.id
+    (values as any)?.country_id?.id,
+    (values as any)?.department_id?.id,
+    (values as any)?.province_id?.id
   ])
 
   const resetValue = () => {
@@ -85,6 +90,7 @@ export const InpOpt = (props: InpTextProps) => {
     <View>
       <TouchableOpacity
         onPress={() => setVisible(!visible)}
+        hitSlop={SPACING.hitSlopCorto}
         activeOpacity={0.8}>
         <Input
           ref={input}
@@ -95,7 +101,7 @@ export const InpOpt = (props: InpTextProps) => {
           value={value?.label ?? ''}
           onChangeText={text => setFieldValue(name, text)}
           onBlur={onBlur(name)}
-          errorMessage={isError ? (errors[name] as string) : undefined}
+          errorMessage={isError ? (meta.error as string) : undefined}
           labelProps={{ style: INPUTS_STYLES.title }}
           inputStyle={INPUTS_STYLES.inp}
           inputContainerStyle={INPUTS_STYLES.impContainer}
@@ -107,7 +113,9 @@ export const InpOpt = (props: InpTextProps) => {
         overlayStyle={styles.overlay}
         onBackdropPress={() => setVisible(false)}>
         <Dialog.Title title={props?.title} titleStyle={INPUTS_STYLES.title} />
-        <ScrollView showsVerticalScrollIndicator={false}>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled">
           {options.map(item => (
             <ListItem
               key={item?.id}
