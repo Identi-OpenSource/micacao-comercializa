@@ -31,7 +31,7 @@ export const ListModules: React.FC = () => {
     .filtered('tenant == $0', tenant)
     .sorted('name')
 
-  console.log('tenant', tenant)
+  // console.log('tenant', tenant)
 
   useEffect(() => {
     if (isFocused) {

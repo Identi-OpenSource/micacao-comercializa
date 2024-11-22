@@ -77,7 +77,7 @@ export const InpGeoRef = (props: InpTextProps) => {
     )
   }
 
-  console.log('region', region)
+  // console.log('region', region)
 
   return (
     <View>
