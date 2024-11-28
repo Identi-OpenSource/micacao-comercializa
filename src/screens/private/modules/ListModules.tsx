@@ -21,6 +21,7 @@ import { COLORS, FONTS, SPACING } from '../../../contexts/theme/defaultTheme'
 import { Image, Text, Icon } from '@rneui/themed'
 import i18n from '../../../contexts/i18n/i18n'
 import { useTools } from '../../../hooks/useTools'
+import Config from 'react-native-config'
 
 export const ListModules: React.FC = () => {
   const isFocused = useIsFocused()
@@ -53,6 +54,8 @@ export const ListModules: React.FC = () => {
         removeClippedSubviews={false}
         renderItem={({ item }) => <RenderItem item={item} />}
       />
+
+      <Text style={styles.version}>{Config.VERSION_NAME}</Text>
     </Container>
   )
 }
@@ -92,6 +95,13 @@ const RenderItem: React.FC<RenderItemProps> = ({ item }) => {
 }
 
 const styles = StyleSheet.create({
+  version: {
+    fontFamily: FONTS.regular,
+    textAlign: 'center',
+    color: COLORS.grayOpacity,
+    fontSize: 12,
+    paddingVertical: SPACING.xLarge
+  },
   headerSection: {
     paddingVertical: SPACING.medium,
     paddingHorizontal: SPACING.small

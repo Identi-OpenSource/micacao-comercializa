@@ -13,15 +13,19 @@ import usePermissions from '../../../hooks/usePermissions'
 import { PERMISSIONS } from 'react-native-permissions'
 import MapView, { MAP_TYPES, Marker, PROVIDER_GOOGLE } from 'react-native-maps'
 import { Text } from '@rneui/themed'
+import { LoadingStore } from '../../loading/LoadingFull'
 const permissionsRequired = [PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION]
+
+const initRegion = {
+  latitude: 0,
+  longitude: 0,
+  latitudeDelta: 0.00415,
+  longitudeDelta: 0.00415
+}
+
 export const InpGeoRef = (props: InpTextProps) => {
   const [field, meta] = useField(props.name)
-  const [region, setRegion] = React.useState({
-    latitude: 0,
-    longitude: 0,
-    latitudeDelta: 0.00415,
-    longitudeDelta: 0.00415
-  })
+  const [region, setRegion] = React.useState<any>(null)
   const { setFieldValue } = useFormikContext()
   const { name } = field
   const mapRef = React.useRef<MapView>(null)
@@ -39,7 +43,7 @@ export const InpGeoRef = (props: InpTextProps) => {
   }, [statuses])
 
   useEffect(() => {
-    if (region.latitude !== 0 && region.longitude !== 0) {
+    if (region) {
       const featureCollection = {
         type: 'FeatureCollection',
         features: [
@@ -64,9 +68,9 @@ export const InpGeoRef = (props: InpTextProps) => {
     Geolocation.getCurrentPosition(
       position => {
         const { latitude, longitude } = position.coords
-        setRegion({ ...region, latitude, longitude })
+        setRegion({ ...initRegion, latitude, longitude })
         mapRef.current?.animateToRegion(
-          { ...region, latitude, longitude },
+          { ...initRegion, latitude, longitude },
           1000
         )
       },
@@ -80,58 +84,69 @@ export const InpGeoRef = (props: InpTextProps) => {
   // console.log('region', region)
 
   return (
-    <View>
+    <View style={styles.container}>
       <Text style={INPUTS_STYLES.title}>{props?.title}</Text>
-      <Text
-        style={styles.result}>{`${region.latitude}, ${region.longitude}`}</Text>
-      <MapView
-        ref={mapRef}
-        mapType={MAP_TYPES.SATELLITE}
-        provider={PROVIDER_GOOGLE}
-        // region={region}
-        showsUserLocation
-        followsUserLocation
-        showsMyLocationButton={false}
-        showsCompass={false}
-        zoomControlEnabled={false}
-        toolbarEnabled={false}
-        onPress={e => {
-          setRegion({
-            ...region,
-            latitude: e.nativeEvent.coordinate.latitude,
-            longitude: e.nativeEvent.coordinate.longitude
-          })
-        }}
-        onMapReady={() => {
-          console.log('Map is ready')
-        }}
-        loadingEnabled
-        style={styles.map}>
-        <Marker
-          coordinate={{
-            latitude: region.latitude,
-            longitude: region.longitude
-          }}
-          draggable
-          onDragEnd={e =>
-            setRegion({
-              ...region,
-              latitude: e.nativeEvent.coordinate.latitude,
-              longitude: e.nativeEvent.coordinate.longitude
-            })
-          }
-        />
-      </MapView>
-      {isError ? <Text style={INPUTS_STYLES.error}>{meta.error}</Text> : null}
+      {!region ? (
+        <LoadingStore />
+      ) : (
+        <>
+          <Text
+            style={
+              styles.result
+            }>{`${region?.latitude}, ${region?.longitude}`}</Text>
+          <MapView
+            ref={mapRef}
+            mapType={MAP_TYPES.SATELLITE}
+            provider={PROVIDER_GOOGLE}
+            region={region}
+            showsUserLocation
+            followsUserLocation
+            showsMyLocationButton={false}
+            showsCompass={false}
+            zoomControlEnabled={false}
+            toolbarEnabled={false}
+            onPress={e => {
+              setRegion({
+                ...initRegion,
+                latitude: e.nativeEvent.coordinate.latitude,
+                longitude: e.nativeEvent.coordinate.longitude
+              })
+            }}
+            onMapReady={() => {
+              console.log('Map is ready')
+            }}
+            loadingEnabled
+            style={styles.map}>
+            <Marker
+              coordinate={{
+                latitude: region.latitude,
+                longitude: region.longitude
+              }}
+              draggable
+              onDragEnd={e =>
+                setRegion({
+                  ...initRegion,
+                  latitude: e.nativeEvent.coordinate.latitude,
+                  longitude: e.nativeEvent.coordinate.longitude
+                })
+              }
+            />
+          </MapView>
+          {isError ? (
+            <Text style={INPUTS_STYLES.error}>{meta.error}</Text>
+          ) : null}
+        </>
+      )}
     </View>
   )
 }
 
 const styles = StyleSheet.create({
+  container: { width: '100%', height: 350, marginBottom: SPACING.medium },
   map: {
     flex: 1,
     width: '100%',
-    height: 250,
+    minHeight: 250,
     marginBottom: SPACING.medium
   },
   result: {

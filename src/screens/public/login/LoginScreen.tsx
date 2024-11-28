@@ -110,8 +110,8 @@ const useLoginFormik = (
 ) => {
   return useFormik<LoginValues>({
     initialValues: {
-      username: 'agro_app_braud',
-      password: 'Nueva123'
+      username: '', // 'agro_app_braud',
+      password: '' // 'Nueva123'
     },
     validationSchema: getLoginSchema(),
     onSubmit

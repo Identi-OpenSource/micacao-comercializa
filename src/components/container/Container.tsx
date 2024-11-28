@@ -5,7 +5,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { COLORS, SPACING } from '../../contexts/theme/defaultTheme'
 import i18n from '../../contexts/i18n/i18n'
 import useNetInfo from '../../hooks/useNetInfo'
-import Config from 'react-native-config'
 import { FONTS } from '../../contexts/theme/mccTheme'
 
 export const Container = ({
@@ -76,7 +75,6 @@ export const Container = ({
         </View>
       )}
       {children}
-      <Text style={styles.version}>{Config.VERSION_NAME}</Text>
     </View>
   )
 }

@@ -278,7 +278,6 @@ export const useTools = () => {
     moduleSchema: ModuleSchema
   ): ModuleSchemaInstruction[] => {
     const instructionsInOrder: ModuleSchemaInstruction[] = []
-    console.log('fffff', moduleSchema.instructions?.length)
     let currentInstruction = moduleSchema.instructions.find(
       inst => inst.id === moduleSchema.instruction_start
     )
@@ -305,7 +304,6 @@ export const useTools = () => {
     const gatheredInstructions = instructions.filter(
       inst => inst.config.is_gather
     )
-    console.log('gatheredInstructions', gatheredInstructions.length)
     const inputs: any[] = []
     const initialValues: { [key: string]: any } = {}
     const validationSchema: { [key: string]: any } = {}
@@ -347,7 +345,6 @@ export const useTools = () => {
   }
 
   const runInstructionPostGather = async () => {
-    console.log('runInstructionPostGather')
     const stackPostGather = JSON.parse(
       (getItem(KEYS_MMKV.POST_GATHER_STACK) as string) || '[]'
     )
