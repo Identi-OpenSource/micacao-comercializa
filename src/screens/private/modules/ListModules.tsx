@@ -20,7 +20,6 @@ import { Container } from '../../../components/container/Container'
 import { Image, Text, Icon, Button } from '@rneui/themed'
 import i18n from '../../../contexts/i18n/i18n'
 import { useTools } from '../../../hooks/useTools'
-import Config from 'react-native-config'
 import {
   BTN_STYLES,
   COLORS,
