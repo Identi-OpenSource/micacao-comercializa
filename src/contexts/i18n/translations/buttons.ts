@@ -7,7 +7,8 @@ export const buttons: Translations = {
     save: 'save',
     sign_up: 'sign up',
     ingress: 'ingress',
-    changePasswordBtn: 'change password'
+    changePasswordBtn: 'change password',
+    logout: 'logout'
   },
   ES: {
     submit: 'enviar',
@@ -15,6 +16,7 @@ export const buttons: Translations = {
     sign_up: 'entrar',
     save: 'guardar',
     ingress: 'ingresar',
-    changePasswordBtn: 'cambiar contraseña'
+    changePasswordBtn: 'cambiar contraseña',
+    logout: 'cerrar sesión'
   }
 }

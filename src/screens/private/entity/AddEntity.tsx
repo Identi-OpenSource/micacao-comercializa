@@ -33,7 +33,7 @@ export const AddEntity = () => {
   useLayoutEffect(() => {
     navigation.setOptions({ title: module?.name })
   }, [module])
-
+  // console.log('module', module?.schema_id)
   const onSubmit = async (values: any) => {
     setIsLoading(true)
     const isSave = await saveEntity({ values, module, instructions: insOrder })

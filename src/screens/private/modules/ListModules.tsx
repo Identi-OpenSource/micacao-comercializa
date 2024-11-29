@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { useQuery } from '@realm/react'
+import { useApp, useQuery } from '@realm/react'
 import { Module } from '../../../db/models/ModuleSchema'
 import {
   ActivityIndicator,
@@ -17,20 +17,36 @@ import {
 import { RootStackParamList } from '../../../router/private'
 import { useSecureStorage } from '../../../contexts/secure/SecureStorageContext'
 import { Container } from '../../../components/container/Container'
-import { COLORS, FONTS, SPACING } from '../../../contexts/theme/defaultTheme'
-import { Image, Text, Icon } from '@rneui/themed'
+import { Image, Text, Icon, Button } from '@rneui/themed'
 import i18n from '../../../contexts/i18n/i18n'
 import { useTools } from '../../../hooks/useTools'
 import Config from 'react-native-config'
+import {
+  BTN_STYLES,
+  COLORS,
+  FONTS,
+  SPACING
+} from '../../../contexts/theme/mccTheme'
+import useMessageHandler from '../../../hooks/useErrorHandler'
 
 export const ListModules: React.FC = () => {
+  const app = useApp()
   const isFocused = useIsFocused()
-  const { getDataJWT } = useSecureStorage()
+  const { getDataJWT, clearMMKV } = useSecureStorage()
   const { runInstructionPostGather } = useTools()
+  const { handleMessage } = useMessageHandler()
   const tenant = getDataJWT()?.tenant
   const modules = useQuery<Module>('Module')
     .filtered('tenant == $0', tenant)
     .sorted('name')
+
+  const logout = async () => {
+    clearMMKV()
+    handleMessage('info', 'logoutMsg')
+    await app.currentUser?.logOut()
+  }
+
+  // console.log('modules', modules)
 
   // console.log('tenant', tenant)
 
@@ -54,8 +70,17 @@ export const ListModules: React.FC = () => {
         removeClippedSubviews={false}
         renderItem={({ item }) => <RenderItem item={item} />}
       />
-
-      <Text style={styles.version}>{Config.VERSION_NAME}</Text>
+      <Button
+        title={i18n.t('logout', { modifier: 'capitalize' })}
+        onPress={() => logout()}
+        hitSlop={SPACING.hitSlop}
+        containerStyle={{
+          marginVertical: SPACING.large,
+          ...BTN_STYLES.primary.buttonContainer
+        }}
+        titleStyle={BTN_STYLES.primary.buttonTitle}
+        buttonStyle={BTN_STYLES.primary.buttonStyle}
+      />
     </Container>
   )
 }

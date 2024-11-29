@@ -13,7 +13,8 @@ export const texts: Translations = {
     changePassword:
       'You must set a new password to continue, since it is your first login or you recently requested a password reset.',
     noConnection: 'No connection established to the internet',
-    whatDoYouWantToDoToday: 'What do you want to do today?'
+    whatDoYouWantToDoToday: 'What do you want to do today?',
+    logoutMsg: 'logout'
   },
   ES: {
     welcome: 'Bienvenido(a)',
@@ -28,6 +29,7 @@ export const texts: Translations = {
     changePassword:
       'Debes establecer una nueva contraseña para continuar, ya que es tu primer inicio de sesión o se solicitó recientemente el restablecimiento de la misma.',
     noConnection: 'No hay conexión estable a internet',
-    whatDoYouWantToDoToday: '¿Qué quieres hacer hoy?'
+    whatDoYouWantToDoToday: '¿Qué quieres hacer hoy?',
+    logoutMsg: 'Se ha cerrado la sesión'
   }
 }

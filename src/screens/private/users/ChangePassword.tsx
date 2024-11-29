@@ -11,7 +11,7 @@ import { FormikHelpers, useFormik } from 'formik'
 import { Button, Image, Input, Text } from '@rneui/themed'
 import { Dimensions, StyleSheet, View } from 'react-native'
 import * as Yup from 'yup'
-import { useQuery, useRealm } from '@realm/react'
+import { useApp, useQuery, useRealm } from '@realm/react'
 import { CONST_USER, User } from '../../../db/models/UserSchema'
 import { SPACING, COLORS, FONTS } from '../../../contexts/theme/mccTheme'
 // Constantes
@@ -24,8 +24,10 @@ export const ChangePassword = () => {
   const { getDataJWT } = useSecureStorage()
   const { handleErrorMessage, handleMessage } = useMessageHandler()
   const realm = useRealm()
+  const app = useApp()
   const uuid = getDataJWT()?.uuid
   const userData = useQuery<User>('User').filtered('uuid == $0', uuid)[0]
+  const { clearMMKV } = useSecureStorage()
 
   const formik = useLoginFormik(async values => {
     try {
@@ -39,7 +41,12 @@ export const ChangePassword = () => {
       await patch<AuthResponse>(API_CONFIG.Auth.changePassword, data)
       await changeStatusPass()
     } catch (err) {
-      handleErrorMessage(err as AxiosError)
+      const error = err as AxiosError
+      handleErrorMessage(error)
+      if (error?.status === 401 || error?.status === 417) {
+        await app.currentUser?.logOut()
+        clearMMKV()
+      }
     } finally {
       setIsLoading(false)
     }
