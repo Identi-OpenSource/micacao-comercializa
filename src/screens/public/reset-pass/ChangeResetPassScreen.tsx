@@ -1,11 +1,5 @@
 import React from 'react'
-import {
-  Dimensions,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
-  View
-} from 'react-native'
+import { Dimensions, ScrollView, StyleSheet, View } from 'react-native'
 import { Button, Image, Input, Text } from '@rneui/themed'
 import { useFormik, FormikHelpers } from 'formik'
 import * as Yup from 'yup'
@@ -13,12 +7,8 @@ import { COLORS } from '../../../contexts/theme/neutralTheme'
 import i18n from '../../../contexts/i18n/i18n'
 import useCustomHttpRequest from '../../../hooks/useCustomHttpRequest'
 import { API_CONFIG } from '../../../config/apis'
-import Config from 'react-native-config'
 import { AxiosError } from 'axios'
-import { KEYS_MMKV } from '../../../db/mmkv'
 import { AuthResponse } from '../../../db/models/Auth'
-import { useAuthLocal } from '../../../contexts/auth/AuthContext'
-import { useSecureStorage } from '../../../contexts/secure/SecureStorageContext'
 import useMessageHandler from '../../../hooks/useErrorHandler'
 import { FONTS, SPACING } from '../../../contexts/theme/mccTheme'
 import { useNavigation } from '@react-navigation/native'
@@ -27,30 +17,27 @@ import { useNavigation } from '@react-navigation/native'
 const { width } = Dimensions.get('window')
 const LOGO = require('../../../assets/img/logo.png')
 
-// Función principal del LoginScreen
-export const LoginScreen: React.FC = () => {
+export const ChangeResetPassScreen: React.FC = () => {
   const [isLoading, setIsLoading] = React.useState(false)
-  const { post } = useCustomHttpRequest()
-  const { setItem } = useSecureStorage()
-  const { handleErrorMessage } = useMessageHandler()
-  const { login } = useAuthLocal()
+  const { patch } = useCustomHttpRequest()
+  const { handleMessage } = useMessageHandler()
   const navigation = useNavigation<any>()
 
   const formik = useLoginFormik(async values => {
     try {
       setIsLoading(true)
       const data = {
-        ...values,
-        channel: Config.CHANNEL_APP,
-        tenant: '',
-        country: ''
+        username: values.username,
+        hash: values.hash,
+        password: values.password
       }
-      const resp = await post<AuthResponse>(API_CONFIG.Auth.login, data)
-      setItem(KEYS_MMKV.ACCESS_TOKEN, resp.data.access_token)
-      setItem(KEYS_MMKV.REFRESH_TOKEN, resp.data.refresh_token)
-      await login(resp?.data?.access_token)
+      await patch<AuthResponse>(API_CONFIG.Auth.resetPassword, data)
+      navigation.navigate('Home')
+      handleMessage('success', 'resetPasswordSuccess')
     } catch (err) {
-      handleErrorMessage(err as AxiosError)
+      const error = err as AxiosError
+      console.log('error', error)
+      handleMessage('error', 'resetPasswordError')
     } finally {
       setIsLoading(false)
     }
@@ -72,25 +59,37 @@ export const LoginScreen: React.FC = () => {
           formik={formik}
         />
         <FormInput
+          field="hash"
+          label={i18n.t('hash', { modifier: 'capitalize' })}
+          placeholder={i18n.t('hash')}
+          formik={formik}
+        />
+        <FormInput
           field="password"
-          label={i18n.t('password')}
+          label={i18n.t('password', { modifier: 'capitalize' })}
           formik={formik}
           secureTextEntry
           placeholder={i18n.t('password')}
         />
-        <View style={styles.btnResetPassContainer}>
-          <TouchableOpacity
-            style={styles.btnResetPass}
-            onPress={() => navigation.navigate('ResetPass')}>
-            <Text style={styles.textBtnResetPass}>{i18n.t('resetPass')}</Text>
-          </TouchableOpacity>
-        </View>
+        <FormInput
+          field="repassword"
+          label={i18n.t('repassword', { modifier: 'capitalize' })}
+          formik={formik}
+          secureTextEntry
+          placeholder={i18n.t('repassword')}
+        />
         <FormButton
           title={i18n.t('ingress', { modifier: 'capitalize' })}
           isLoading={isLoading}
           onPress={formik.handleSubmit}
         />
-        <Text style={styles.version}>{Config.VERSION_NAME}</Text>
+
+        <FormButton
+          title={i18n.t('cancel', { modifier: 'capitalize' })}
+          isLoading={isLoading}
+          onPress={() => navigation.navigate('Home')}
+          type="cancel"
+        />
       </View>
     </ScrollView>
   )
@@ -98,19 +97,28 @@ export const LoginScreen: React.FC = () => {
 
 // Definición de los tipos de valores del formulario
 interface LoginValues {
+  hash: string
   username: string
   password: string
+  repassword: string
 }
 
 // Validación con Yup
 const getLoginSchema = () => {
   return Yup.object().shape({
+    hash: Yup.string()
+      .min(2, i18n.t('minLengthString', { values: { minLength: 2 } }))
+      .max(20, i18n.t('maxLengthString', { values: { maxLength: 20 } }))
+      .required(i18n.t('required')),
     username: Yup.string()
       .min(2, i18n.t('minLengthString', { values: { minLength: 2 } }))
       .max(50, i18n.t('maxLengthString', { values: { maxLength: 50 } }))
       .required(i18n.t('required')),
     password: Yup.string()
       .min(6, i18n.t('minLengthString', { values: { minLength: 8 } }))
+      .required(i18n.t('required')),
+    repassword: Yup.string()
+      .oneOf([Yup.ref('password')], i18n.t('passwordNotMatch'))
       .required(i18n.t('required'))
   })
 }
@@ -124,8 +132,10 @@ const useLoginFormik = (
 ) => {
   return useFormik<LoginValues>({
     initialValues: {
-      username: '', // 'agro_app_braud',
-      password: '' // 'Nueva123'
+      username: '',
+      password: '',
+      repassword: '',
+      hash: ''
     },
     validationSchema: getLoginSchema(),
     onSubmit
@@ -169,13 +179,14 @@ interface FormButtonProps {
   title: string
   isLoading: boolean
   onPress: () => void
+  type?: 'cancel'
 }
 
-// Componente de Botón
 const FormButton: React.FC<FormButtonProps> = ({
   title,
   isLoading,
-  onPress
+  onPress,
+  type = null
 }) => {
   return (
     <Button
@@ -183,8 +194,14 @@ const FormButton: React.FC<FormButtonProps> = ({
       loading={isLoading}
       onPress={onPress}
       loadingProps={{ size: 'small', color: COLORS.white }}
-      titleStyle={styles.buttonTitle}
-      buttonStyle={styles.buttonStyle}
+      titleStyle={[
+        styles.buttonTitle,
+        type === 'cancel' && styles.buttonTitleCancel
+      ]}
+      buttonStyle={[
+        styles.buttonStyle,
+        type === 'cancel' && styles.buttonStyleCancel
+      ]}
       containerStyle={styles.buttonContainer}
     />
   )
@@ -197,13 +214,19 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: COLORS.primary
   },
+  buttonStyleCancel: {
+    backgroundColor: 'transparent'
+  },
+  buttonTitleCancel: {
+    color: COLORS.inputText
+  },
   container: {
     flex: 1,
     alignContent: 'center',
     backgroundColor: COLORS.background
   },
   logoContainer: {
-    marginTop: width * 0.2,
+    marginTop: SPACING.small,
     alignItems: 'center',
     height: 100,
     width

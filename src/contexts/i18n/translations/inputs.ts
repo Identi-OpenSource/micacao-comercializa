@@ -9,7 +9,8 @@ export const inputs: Translations = {
     country: 'Country',
     department: 'Department',
     province: 'Province',
-    district: 'District'
+    district: 'District',
+    hash: 'Code'
   },
   ES: {
     user: 'Usuario',
@@ -19,6 +20,7 @@ export const inputs: Translations = {
     country: 'País',
     department: 'Departamento',
     province: 'Provincia',
-    district: 'Distrito'
+    district: 'Distrito',
+    hash: 'Código'
   }
 }
