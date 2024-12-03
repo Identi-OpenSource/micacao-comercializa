@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   View
 } from 'react-native'
-import { Button, Image, Input, Text } from '@rneui/themed'
+import { Button, Icon, Image, Input, Text } from '@rneui/themed'
 import { useFormik, FormikHelpers } from 'formik'
 import * as Yup from 'yup'
 import { COLORS } from '../../../contexts/theme/neutralTheme'
@@ -75,6 +75,7 @@ export const LoginScreen: React.FC = () => {
           field="password"
           label={i18n.t('password')}
           formik={formik}
+          rightIcon
           secureTextEntry
           placeholder={i18n.t('password')}
         />
@@ -139,18 +140,33 @@ interface FormInputProps {
   field: keyof LoginValues
   formik: ReturnType<typeof useLoginFormik>
   secureTextEntry?: boolean
+  rightIcon?: boolean
 }
 
 // Componente de Input
 const FormInput: React.FC<FormInputProps> = props => {
   const { field, formik, secureTextEntry = false } = props
+  const [secureEntry, setSecureEntry] = React.useState(secureTextEntry)
+
+  const renderIcon = () => {
+    return (
+      <TouchableOpacity onPress={() => setSecureEntry(!secureEntry)}>
+        <Icon
+          name={secureEntry ? 'eye-off' : 'eye'}
+          type="ionicon"
+          color={secureEntry ? COLORS.grayOpacity : COLORS.primary}
+          size={28}
+        />
+      </TouchableOpacity>
+    )
+  }
   return (
     <Input
       {...props}
       onChangeText={formik.handleChange(field)}
       onBlur={formik.handleBlur(field)}
       value={formik.values[field]}
-      secureTextEntry={secureTextEntry}
+      secureTextEntry={secureEntry}
       inputStyle={styles.input}
       autoCapitalize="none"
       autoCorrect={false}
@@ -160,6 +176,7 @@ const FormInput: React.FC<FormInputProps> = props => {
           ? formik.errors[field]
           : undefined
       }
+      rightIcon={props?.rightIcon && renderIcon()}
     />
   )
 }
