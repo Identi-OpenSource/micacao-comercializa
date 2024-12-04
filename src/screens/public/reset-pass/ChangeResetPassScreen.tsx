@@ -1,6 +1,12 @@
 import React from 'react'
-import { Dimensions, ScrollView, StyleSheet, View } from 'react-native'
-import { Button, Image, Input, Text } from '@rneui/themed'
+import {
+  Dimensions,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  View
+} from 'react-native'
+import { Button, Icon, Image, Input, Text } from '@rneui/themed'
 import { useFormik, FormikHelpers } from 'formik'
 import * as Yup from 'yup'
 import { COLORS } from '../../../contexts/theme/neutralTheme'
@@ -11,7 +17,7 @@ import { AxiosError } from 'axios'
 import { AuthResponse } from '../../../db/models/Auth'
 import useMessageHandler from '../../../hooks/useErrorHandler'
 import { FONTS, SPACING } from '../../../contexts/theme/mccTheme'
-import { useNavigation } from '@react-navigation/native'
+import { useNavigation, useRoute } from '@react-navigation/native'
 
 // Constantes
 const { width } = Dimensions.get('window')
@@ -22,12 +28,14 @@ export const ChangeResetPassScreen: React.FC = () => {
   const { patch } = useCustomHttpRequest()
   const { handleMessage } = useMessageHandler()
   const navigation = useNavigation<any>()
+  const route = useRoute<any>()
+  const params = route.params
 
   const formik = useLoginFormik(async values => {
     try {
       setIsLoading(true)
       const data = {
-        username: values.username,
+        username: params?.username,
         hash: values.hash,
         password: values.password
       }
@@ -49,15 +57,9 @@ export const ChangeResetPassScreen: React.FC = () => {
         <Image source={LOGO} style={styles.logo} />
       </View>
       <Text h4 style={styles.title}>
-        {i18n.t('welcome')}
+        {i18n.t('changePassSend')}
       </Text>
       <View style={styles.formikContainer}>
-        <FormInput
-          field="username"
-          label={i18n.t('user')}
-          placeholder={i18n.t('username')}
-          formik={formik}
-        />
         <FormInput
           field="hash"
           label={i18n.t('hash', { modifier: 'capitalize' })}
@@ -70,6 +72,7 @@ export const ChangeResetPassScreen: React.FC = () => {
           formik={formik}
           secureTextEntry
           placeholder={i18n.t('password')}
+          rightIcon
         />
         <FormInput
           field="repassword"
@@ -77,6 +80,7 @@ export const ChangeResetPassScreen: React.FC = () => {
           formik={formik}
           secureTextEntry
           placeholder={i18n.t('repassword')}
+          rightIcon
         />
         <FormButton
           title={i18n.t('ingress', { modifier: 'capitalize' })}
@@ -98,7 +102,6 @@ export const ChangeResetPassScreen: React.FC = () => {
 // Definición de los tipos de valores del formulario
 interface LoginValues {
   hash: string
-  username: string
   password: string
   repassword: string
 }
@@ -109,10 +112,6 @@ const getLoginSchema = () => {
     hash: Yup.string()
       .min(2, i18n.t('minLengthString', { values: { minLength: 2 } }))
       .max(20, i18n.t('maxLengthString', { values: { maxLength: 20 } }))
-      .required(i18n.t('required')),
-    username: Yup.string()
-      .min(2, i18n.t('minLengthString', { values: { minLength: 2 } }))
-      .max(50, i18n.t('maxLengthString', { values: { maxLength: 50 } }))
       .required(i18n.t('required')),
     password: Yup.string()
       .min(6, i18n.t('minLengthString', { values: { minLength: 8 } }))
@@ -132,7 +131,6 @@ const useLoginFormik = (
 ) => {
   return useFormik<LoginValues>({
     initialValues: {
-      username: '',
       password: '',
       repassword: '',
       hash: ''
@@ -149,18 +147,35 @@ interface FormInputProps {
   field: keyof LoginValues
   formik: ReturnType<typeof useLoginFormik>
   secureTextEntry?: boolean
+  rightIcon?: boolean
 }
 
 // Componente de Input
 const FormInput: React.FC<FormInputProps> = props => {
   const { field, formik, secureTextEntry = false } = props
+
+  const [secureEntry, setSecureEntry] = React.useState(secureTextEntry)
+
+  const renderIcon = () => {
+    return (
+      <TouchableOpacity onPress={() => setSecureEntry(!secureEntry)}>
+        <Icon
+          name={secureEntry ? 'eye-off' : 'eye'}
+          type="ionicon"
+          color={secureEntry ? COLORS.grayOpacity : COLORS.primary}
+          size={28}
+        />
+      </TouchableOpacity>
+    )
+  }
+
   return (
     <Input
       {...props}
       onChangeText={formik.handleChange(field)}
       onBlur={formik.handleBlur(field)}
       value={formik.values[field]}
-      secureTextEntry={secureTextEntry}
+      secureTextEntry={secureEntry}
       inputStyle={styles.input}
       autoCapitalize="none"
       autoCorrect={false}
@@ -170,6 +185,7 @@ const FormInput: React.FC<FormInputProps> = props => {
           ? formik.errors[field]
           : undefined
       }
+      rightIcon={props?.rightIcon && renderIcon()}
     />
   )
 }

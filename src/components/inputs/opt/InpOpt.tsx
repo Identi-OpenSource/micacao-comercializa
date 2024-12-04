@@ -116,19 +116,23 @@ export const InpOpt = (props: InpTextProps) => {
         <ScrollView
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled">
-          {options.map(item => (
-            <ListItem
-              key={item?.id}
-              onPress={() => onPressItem(item?.value)}
-              bottomDivider>
-              <ListItem.Content>
-                <ListItem.Title style={INPUTS_STYLES.inpOpt}>
-                  {item?.label}
-                </ListItem.Title>
-              </ListItem.Content>
-              <ListItem.Chevron size={20} color={COLORS.primary} />
-            </ListItem>
-          ))}
+          {options
+            ?.sort((a: any, b: any) => {
+              return a.label.localeCompare(b.label)
+            })
+            ?.map(item => (
+              <ListItem
+                key={item?.id}
+                onPress={() => onPressItem(item?.value)}
+                bottomDivider>
+                <ListItem.Content>
+                  <ListItem.Title style={INPUTS_STYLES.inpOpt}>
+                    {item?.label}
+                  </ListItem.Title>
+                </ListItem.Content>
+                <ListItem.Chevron size={20} color={COLORS.primary} />
+              </ListItem>
+            ))}
         </ScrollView>
       </Dialog>
     </View>

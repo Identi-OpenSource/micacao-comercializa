@@ -17,7 +17,11 @@ export const texts: Translations = {
     logoutMsg: 'logout',
     restPassText:
       'Error al restablecer la contraseña. Puede que hayas introducido un dato incorrecto o que el código haya expirado. El mismo tiene una validez de 5 minutos.',
-    resetPasswordSuccess: '¡Tu contraseña ha sido restablecida con éxito!'
+    resetPasswordErrorRequest:
+      'Error al solicitar el código de cambio de clave. Puede que hayas introducido un dato incorrecto',
+    resetPasswordSuccess: '¡Tu contraseña ha sido restablecida con éxito!',
+    changePass: 'Recuperar contraseña',
+    changePassSend: 'Cambiar contraseña'
   },
   ES: {
     welcome: 'Bienvenido(a)',
@@ -35,10 +39,14 @@ export const texts: Translations = {
     whatDoYouWantToDoToday: '¿Qué quieres hacer hoy?',
     logoutMsg: 'Se ha cerrado la sesión',
     restPassText:
-      '¡Recuperemos tu contraseña! Solicita el código de cambio de clave a tu encargado y continúa con los siguientes pasos.',
+      '¡Recuperemos tu contraseña! Solicita el código de cambio de clave y continúa al siguientes pasos.',
     resetPasswordError:
       'Error al restablecer la contraseña. Puede que hayas introducido un dato incorrecto o que el código haya expirado. El mismo tiene una validez de 5 minutos.',
+    resetPasswordErrorRequest:
+      'Error al solicitar el código o se ha alcanzado el límite de intentos permitidos. Por favor, espera 5 minutos para volver a solicitar el código e intentarlo nuevamente.',
     resetPasswordSuccess:
-      '¡Tu contraseña ha sido restablecida con éxito! Ahora puedes iniciar sesión con tu nueva contraseña.'
+      '¡Tu contraseña ha sido restablecida con éxito! Ahora puedes iniciar sesión con tu nueva contraseña.',
+    changePass: 'Recuperar contraseña',
+    changePassSend: 'Cambiar contraseña'
   }
 }
