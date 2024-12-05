@@ -91,7 +91,7 @@ Estamos encantados de recibir contribuciones de la comunidad para mejorar **MiCa
 
 ## Licencia
 
-Este proyecto está licenciado bajo la Licencia MIT. Consulta el archivo [LICENSE](./LICENSE) para obtener detalles completos.
+Este proyecto está licenciado bajo la Licencia Apache-2.0. Consulta el archivo [LICENSE](./LICENSE) para obtener detalles completos.
 
 ## Aviso de Licencia MIT
 
