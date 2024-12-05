@@ -1,79 +1,98 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+<p align="center">
+  <a href="https://www.micacao.org/">
+    <img src="https://static.wixstatic.com/media/ebdd7b_b5544ac1b9d542cb8dfd9ddd84a0609f~mv2.png/v1/fill/w_195,h_61,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/4.png" alt="Descripción de la imagen" width="300" style="background-color: white; border-radius: 10px; padding: 10px;">
+  </a>
+</p>
 
-# Getting Started
+<p align="center">
+  El proyecto <a href="https://www.micacao.org/" style="text-decoration: none;">MiCacao</a> busca desarrollar una herramienta de trazabilidad para productores y comercializadores de cacao en Perú y Colombia, garantizando el cumplimiento de la normativa europea sobre productos libres de deforestación.
+</p>
 
->**Note**: Make sure you have completed the [React Native - Environment Setup](https://reactnative.dev/docs/environment-setup) instructions till "Creating a new application" step, before proceeding.
+# MiCacao Comercializa App
 
-## Step 1: Start the Metro Server
+**MiCacao Comercializa** es una innovadora aplicación en React Native, diseñada para que los agentes de campo puedan capturar los datos de los productores de cacao en Colombia y Perú que no tienen la posibilidad de usar nuestra app principal <a href="https://play.google.com/store/search?q=micacao&c=apps&hl=es_419&pli=1">**MiCacao Productores**</a>, La aplicación permite gestionar de manera eficiente todos los aspectos relacionados con la producción de cacao.
 
-First, you will need to start **Metro**, the JavaScript _bundler_ that ships _with_ React Native.
+Aunque **MiCacao Comercializa** está diseñada en React Native, actualmente **solo es compatible con sistemas Android** en sus versiones API level 29 y superiores. Esto asegura que la aplicación funcione de manera óptima en dispositivos Android modernos, garantizando a los usuarios una experiencia estable y eficiente mientras gestionan la información y procesos de producción.
 
-To start Metro, run the following command from the _root_ of your React Native project:
+<p align="center">
+  <a href="https://play.google.com/store/apps/details?id=digital.identi.micacao.comercializa&hl=es_419">
+    DESCARGAR EN GOOGLE PLAY STORE COLOMBIA Y PERÚ
+  </a>
+</p>
 
-```bash
-# using npm
-npm start
+## Funcionalidades Principales
 
-# OR using Yarn
-yarn start
+- **Registro de Productores**: Los agentes pueden registrar productores de cacao, que no tenga la posibilidad de usar nuestra app principal <a href="https://play.google.com/store/search?q=micacao&c=apps&hl=es_419&pli=1">**MiCacao Productores**</a>
+- **Registro de Parcelas**: Los agentes pueden registrar las parcelas de cultivo, almacenando información clave sobre la localización y características de cada una.
+- **Registro de Compras**: Los agentes pueden registrar compras de cacao a los productores.
+- **Operación Offline y Online**: MiCacao Comercializa puede funcionar tanto en modo offline como online, garantizando que los agentes puedan sincronizar sus datos con la incluso sin conexión a internet.
+
+## Arquitectura
+
+MiCacao Comercializa está diseñada para funcionar con un backend de la nube, que suministra todos los datos necesarios para la gestión de la información. Esto incluye desde la gestión de usuario hasta la información solicitada en cada uno de los formularios, por lo que podemos decir que es una app de recolección de datos.
+
+## Requerimientos
+
+- Java Development Kit (JDK) versión 17+
+- Node.js versión 20+
+- React Native CLI
+- Archivo .env (solicítalo)
+
+#### Compatibilidad
+
+**MiCacao Comercializa** está diseñada para funcionar en dispositivos Android con API level 29 y superiores.
+
+## Instalación
+
+1. Asegúrate de tener React Native instalado en tu sistema. Si aún no lo tienes, sigue las instrucciones en [Instalación de React Native](https://reactnative.dev/docs/environment-setup).
+
+2. Clonar este repositorio:
+
+```
+git clone https://github.com/identi-digital/micacao-app.git
 ```
 
-## Step 2: Start your Application
+3. Instalación de los paquetes de npm:
 
-Let Metro Bundler run in its _own_ terminal. Open a _new_ terminal from the _root_ of your React Native project. Run the following command to start your _Android_ or _iOS_ app:
-
-### For Android
-
-```bash
-# using npm
-npm run android
-
-# OR using Yarn
-yarn android
+```
+npm install --legacy-peer-deps
 ```
 
-### For iOS
+4. Iniciación del proyecto
 
-```bash
-# using npm
-npm run ios
-
-# OR using Yarn
-yarn ios
+```
+npm start -- --reset-cache
 ```
 
-If everything is set up _correctly_, you should see your new app running in your _Android Emulator_ or _iOS Simulator_ shortly provided you have set up your emulator/simulator correctly.
+## Contribución
 
-This is one way to run your app — you can also run it directly from within Android Studio and Xcode respectively.
+Estamos encantados de recibir contribuciones de la comunidad para mejorar **MiCacao**. Si estás interesado en contribuir, aquí te mostramos algunas maneras en las que puedes hacerlo:
 
-## Step 3: Modifying your App
+- **Sugerir una característica**: Si tienes una idea para una nueva funcionalidad que podría mejorar la aplicación, abre un issue en el repositorio para discutir tu sugerencia. Nos encantaría escuchar tus ideas y colaborar en su implementación.
 
-Now that you have successfully run the app, let's modify it.
+      Para contribuir, sigue estos pasos:
 
-1. Open `App.tsx` in your text editor of choice and edit some lines.
-2. For **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Developer Menu** (<kbd>Ctrl</kbd> + <kbd>M</kbd> (on Window and Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (on macOS)) to see your changes!
+      1. Haz un "fork" de este repositorio.
+      2. Crea una nueva rama para tu función o corrección (`git checkout -b feature/nueva-funcion`).
+      3. Realiza tus cambios y realiza commits descriptivos (`git commit -m 'Agrega nueva función'`).
+      4. Envía tus cambios al repositorio forkeado (`git push origin feature/nueva-funcion`).
+      5. Abre un Pull Request en este repositorio desde tu rama forkeada.
 
-   For **iOS**: Hit <kbd>Cmd ⌘</kbd> + <kbd>R</kbd> in your iOS Simulator to reload the app and see your changes!
+      Revisaremos tu contribución lo antes posible
+      ¡Esperamos tus sugerencias y mejoras!
 
-## Congratulations! :tada:
+- **Implementación de correcciones de errores y mejoras**: Si deseas corregir un error o implementar una mejora, primero revisa los issues abiertos para ver si alguien más ya está trabajando en ello. Si no es así, crea un issue para anunciar tu intención de trabajar en la corrección o mejora y luego envía un pull request cuando hayas terminado, para contribuir a la mejora del proyecto sigue los pasos del punto anterior.
 
-You've successfully run and modified your React Native App. :partying_face:
+- **Informar errores**: Si encuentras un error o problema en la aplicación, por favor, repórtalo a través del [sistema de issues](https://github.com/identi-digital/micacao-app/issues). Asegúrate de proporcionar detalles sobre el problema, cómo reproducirlo y cualquier información adicional que pueda ser útil para corregirlo.
 
-### Now what?
+- **Respondiendo a los problemas**: Ayuda a la comunidad respondiendo a los problemas abiertos en el repositorio. Si tienes experiencia en la solución de problemas específicos, tus sugerencias y soluciones serán muy apreciadas.
 
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [Introduction to React Native](https://reactnative.dev/docs/getting-started).
+¡Gracias por tu interés en contribuir a **MiCacao**! Tu ayuda es invaluable para mejorar la herramienta y apoyar a los productores de cacao en Colombia y Perú.
 
-# Troubleshooting
+## Licencia
 
-If you can't get this to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
+Este proyecto está licenciado bajo la Licencia MIT. Consulta el archivo [LICENSE](./LICENSE) para obtener detalles completos.
 
-# Learn More
+## Aviso de Licencia MIT
 
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+El software está proporcionado "tal cual", sin ninguna garantía de ningún tipo. Los autores no son responsables de ningún daño que pueda surgir del uso del software.
