@@ -49,7 +49,7 @@ MiCacao Comercializa está diseñada para funcionar con un backend de la nube, q
 2. Clonar este repositorio:
 
 ```
-git clone https://github.com/identi-digital/micacao-app.git
+git clone https://github.com/Identi-OpenSource/micacao-comercializa.git
 ```
 
 3. Instalación de los paquetes de npm:
@@ -87,7 +87,7 @@ Estamos encantados de recibir contribuciones de la comunidad para mejorar **MiCa
 
 - **Respondiendo a los problemas**: Ayuda a la comunidad respondiendo a los problemas abiertos en el repositorio. Si tienes experiencia en la solución de problemas específicos, tus sugerencias y soluciones serán muy apreciadas.
 
-¡Gracias por tu interés en contribuir a **MiCacao**! Tu ayuda es invaluable para mejorar la herramienta y apoyar a los productores de cacao en Colombia y Perú.
+¡Gracias por tu interés en contribuir a **MiCacao Comercializa**! Tu ayuda es invaluable para mejorar la herramienta y apoyar a los productores de cacao en Colombia y Perú.
 
 ## Licencia
 
