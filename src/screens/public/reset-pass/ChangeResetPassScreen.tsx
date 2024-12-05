@@ -31,25 +31,28 @@ export const ChangeResetPassScreen: React.FC = () => {
   const route = useRoute<any>()
   const params = route.params
 
-  const formik = useLoginFormik(async values => {
-    try {
-      setIsLoading(true)
-      const data = {
-        username: params?.username,
-        hash: values.hash,
-        password: values.password
+  const formik = useLoginFormik(
+    { username: params?.username ?? '' },
+    async values => {
+      try {
+        setIsLoading(true)
+        const data = {
+          username: values.username,
+          hash: values.hash,
+          password: values.password
+        }
+        await patch<AuthResponse>(API_CONFIG.Auth.resetPassword, data)
+        navigation.navigate('Home')
+        handleMessage('success', 'resetPasswordSuccess')
+      } catch (err) {
+        const error = err as AxiosError
+        console.log('error', error)
+        handleMessage('error', 'resetPasswordError')
+      } finally {
+        setIsLoading(false)
       }
-      await patch<AuthResponse>(API_CONFIG.Auth.resetPassword, data)
-      navigation.navigate('Home')
-      handleMessage('success', 'resetPasswordSuccess')
-    } catch (err) {
-      const error = err as AxiosError
-      console.log('error', error)
-      handleMessage('error', 'resetPasswordError')
-    } finally {
-      setIsLoading(false)
     }
-  })
+  )
 
   return (
     <ScrollView style={[styles.container]} keyboardShouldPersistTaps="handled">
@@ -60,6 +63,12 @@ export const ChangeResetPassScreen: React.FC = () => {
         {i18n.t('changePassSend')}
       </Text>
       <View style={styles.formikContainer}>
+        <FormInput
+          field="username"
+          label={i18n.t('username', { modifier: 'capitalize' })}
+          placeholder={i18n.t('username')}
+          formik={formik}
+        />
         <FormInput
           field="hash"
           label={i18n.t('hash', { modifier: 'capitalize' })}
@@ -101,6 +110,7 @@ export const ChangeResetPassScreen: React.FC = () => {
 
 // Definición de los tipos de valores del formulario
 interface LoginValues {
+  username: string
   hash: string
   password: string
   repassword: string
@@ -109,6 +119,10 @@ interface LoginValues {
 // Validación con Yup
 const getLoginSchema = () => {
   return Yup.object().shape({
+    username: Yup.string()
+      .min(2, i18n.t('minLengthString', { values: { minLength: 2 } }))
+      .max(50, i18n.t('maxLengthString', { values: { maxLength: 50 } }))
+      .required(i18n.t('required')),
     hash: Yup.string()
       .min(2, i18n.t('minLengthString', { values: { minLength: 2 } }))
       .max(20, i18n.t('maxLengthString', { values: { maxLength: 20 } }))
@@ -124,6 +138,7 @@ const getLoginSchema = () => {
 
 // Función para crear el hook formik con tipado
 const useLoginFormik = (
+  init: any,
   onSubmit: (
     values: LoginValues,
     formikHelpers: FormikHelpers<LoginValues>
@@ -131,6 +146,7 @@ const useLoginFormik = (
 ) => {
   return useFormik<LoginValues>({
     initialValues: {
+      username: init?.username,
       password: '',
       repassword: '',
       hash: ''

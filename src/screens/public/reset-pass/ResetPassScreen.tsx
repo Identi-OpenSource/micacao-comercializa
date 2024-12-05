@@ -61,6 +61,15 @@ export const ResetPassScreen: React.FC = () => {
           placeholder={i18n.t('username')}
           formik={formik}
         />
+        <View style={styles.btnResetPassContainer}>
+          <TouchableOpacity
+            style={styles.btnResetPass}
+            onPress={() => navigation.navigate('ChangePass')}>
+            <Text style={styles.textBtnResetPass}>
+              {i18n.t('haveCode', { modifier: 'capitalize' })}
+            </Text>
+          </TouchableOpacity>
+        </View>
         <FormButton
           title={i18n.t('continue', { modifier: 'capitalize' })}
           isLoading={isLoading}

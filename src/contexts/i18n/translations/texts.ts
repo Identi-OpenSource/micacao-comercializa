@@ -21,7 +21,8 @@ export const texts: Translations = {
       'Error al solicitar el código de cambio de clave. Puede que hayas introducido un dato incorrecto',
     resetPasswordSuccess: '¡Tu contraseña ha sido restablecida con éxito!',
     changePass: 'Recuperar contraseña',
-    changePassSend: 'Cambiar contraseña'
+    changePassSend: 'Cambiar contraseña',
+    haveCode: 'Ya tengo el código'
   },
   ES: {
     welcome: 'Bienvenido(a)',
@@ -47,6 +48,7 @@ export const texts: Translations = {
     resetPasswordSuccess:
       '¡Tu contraseña ha sido restablecida con éxito! Ahora puedes iniciar sesión con tu nueva contraseña.',
     changePass: 'Recuperar contraseña',
-    changePassSend: 'Cambiar contraseña'
+    changePassSend: 'Cambiar contraseña',
+    haveCode: 'Ya tengo el código'
   }
 }
